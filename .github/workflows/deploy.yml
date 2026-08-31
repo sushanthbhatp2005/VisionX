@@ -33,12 +33,10 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Requires Pages to be on, with Settings -> Pages -> Source set to
-      # "GitHub Actions". The `enablement` option cannot do this for us: the
-      # default GITHUB_TOKEN has no `administration` permission, so creating
-      # the Pages site is a one-time manual step.
-      - uses: actions/configure-pages@v5
-
+      # No configure-pages step: its only job is to export base-path outputs
+      # for frameworks that read them, and the base path is set explicitly in
+      # vite.config.js instead. Dropping it removes a step that can fail
+      # before the artifact is ever uploaded.
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
