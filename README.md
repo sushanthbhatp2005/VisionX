@@ -42,7 +42,8 @@ That last step is the point of the whole demo: analysis becomes a decision.
 | `/` | Overview — KPIs, headline conversation, differentiators |
 | `/dashboard` | Live analytics — volume + forecast, sentiment, emotion, platforms, stance, geography, annotated stream |
 | `/explorer` | Topic explorer — every signature panel for one topic |
-| `/network` | Influence network — force graph, communities, influence scores, coordination watch |
+| `/network` | Influence network — force graph, cascade replay, communities, influence scores, coordination watch |
+| `/compare` | Compare topics — two conversations side by side across every metric |
 | `/alerts` | Alert board with an alert simulator |
 | `/report` | Intelligence brief with JSON / CSV / PDF export |
 
@@ -69,7 +70,26 @@ That last step is the point of the whole demo: analysis becomes a decision.
 - **Insight fusion score** — sentiment × emotion × topic × community ×
   influence × time × spread, with every driver and weight exposed.
 - **Conversation DNA** — the whole story of a topic on one strip.
+- **Emotion transitions** — the phase ladder a conversation climbs (Neutral →
+  Concern → Anger → Mobilisation, or the positive branch), where it sits now,
+  and the next likely phase with a probability and an ETA. Anger plus volume
+  escalates; fear plus volume disperses — the phase is what changes the response.
+- **Cascade replay** — scrub or play a single post travelling through the
+  network, with accounts reached, follower reach and hop depth at each moment.
+- **Related conversations** — topics that are merging, adjacent, spilling over
+  or competing for the same attention. A merging pair has to be briefed as one.
+- **Topic comparison** — any two topics side by side across ten metrics, with
+  the worse side marked, emotion profiles overlaid, and both phase ladders.
 - **Recommended actions** — ranked, each with the evidence that produced it.
+
+## Demo aids
+
+- [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) — a 6-minute walkthrough with
+  timings, what to click, what to say at each step, and prepared answers for
+  the questions judges actually ask (including "what isn't built yet").
+- [`docs/architecture.svg`](docs/architecture.svg) — the pipeline diagram,
+  1600×900 on a dark background, mapping every stage to the screen that
+  implements it. Drops straight into a 16:9 slide.
 
 ## Controls
 
@@ -84,10 +104,11 @@ That last step is the point of the whole demo: analysis becomes a decision.
 ```
 src/
   data/seed.js       synthetic corpus: topics, accounts, edges, posts, geography
+  data/narrative.js  emotion phases, topic relationships, cascade derivation
   data/engine.js     pure simulation + scoring functions (no React)
   store/LiveContext  the clock: ticks the series, streams posts, raises alerts
   components/        charts, insight panels, network graph, live feed
-  pages/             the six screens
+  pages/             the seven screens
 ```
 
 `data/engine.js` holds every derived score (`fusionScore`, `crisisFactors`,
@@ -112,7 +133,11 @@ One-time setup, needed before the first deploy succeeds: in the repository,
 go to **Settings → Pages → Build and deployment** and set **Source** to
 **GitHub Actions**. The workflow cannot do this for you — creating a Pages
 site needs `administration` permission, which the default `GITHUB_TOKEN` does
-not have.
+not have. The equivalent from a terminal, if the dropdown is being awkward:
+
+```bash
+gh api -X POST repos/OWNER/REPO/pages -f build_type=workflow
+```
 
 Pages serves the site from a subpath, so `vite.config.js` sets
 `base: '/VisionX/'` for builds while leaving the dev server at the root. The app

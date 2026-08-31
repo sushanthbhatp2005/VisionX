@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import {
   Activity, Radar, Network, Bell, FileText, LayoutDashboard, Pause, Play,
-  RotateCcw, Gauge, Wand2,
+  RotateCcw, Gauge, Wand2, GitCompare,
 } from 'lucide-react'
 import { useLive } from './store/LiveContext.jsx'
 import { Dot } from './components/ui.jsx'
@@ -13,12 +13,14 @@ import Explorer from './pages/Explorer.jsx'
 import NetworkPage from './pages/NetworkPage.jsx'
 import Alerts from './pages/Alerts.jsx'
 import Report from './pages/Report.jsx'
+import Compare from './pages/Compare.jsx'
 
 const NAV = [
   { to: '/', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/dashboard', label: 'Live analytics', icon: Activity },
   { to: '/explorer', label: 'Topic explorer', icon: Radar },
   { to: '/network', label: 'Influence network', icon: Network },
+  { to: '/compare', label: 'Compare topics', icon: GitCompare },
   { to: '/alerts', label: 'Alerts', icon: Bell },
   { to: '/report', label: 'Reports', icon: FileText },
 ]
@@ -139,6 +141,7 @@ export default function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/explorer" element={<Explorer />} />
             <Route path="/network" element={<NetworkPage />} />
+            <Route path="/compare" element={<Compare />} />
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/report" element={<Report />} />
           </Routes>

@@ -9,6 +9,7 @@ import {
   InfluenceTable, MisinfoPanel, ViralityPanel, WhyTrending,
 } from '../components/insight.jsx'
 import { GeoPanel, Propagation, SarcasmPanel } from '../components/panels.jsx'
+import { EmotionTransitions, RelatedTopics } from '../components/narrative.jsx'
 import TopicPicker from '../components/TopicPicker.jsx'
 import LiveFeed from '../components/LiveFeed.jsx'
 import { TOPICS } from '../data/seed.js'
@@ -117,6 +118,11 @@ export default function Explorer() {
             </p>
           </div>
         </Card>
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-[1.3fr_1fr]">
+        <EmotionTransitions topic={topic} />
+        <RelatedTopics topic={topic} onPick={setSelectedTopic} />
       </div>
 
       <div className="grid gap-3 lg:grid-cols-3">

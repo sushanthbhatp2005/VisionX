@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" font-family="Inter, Segoe UI, system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0f1d"/>
+      <stop offset="100%" stop-color="#070a12"/>
+    </linearGradient>
+    <linearGradient id="accentBar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6ea8ff"/>
+      <stop offset="50%" stop-color="#c77dff"/>
+      <stop offset="100%" stop-color="#2fd4a7"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3f6fd6"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+
+  <!-- header -->
+  <rect x="60" y="52" width="4" height="46" rx="2" fill="url(#accentBar)"/>
+  <text x="80" y="76" fill="#ffffff" font-size="30" font-weight="700" letter-spacing="-0.4">VisionX — pipeline architecture</text>
+  <text x="80" y="98" fill="#8b95b5" font-size="15">Collect → Analyse → Predict → Alert → Act, and where each stage is visible in the demo</text>
+
+  <!-- ============ sources ============ -->
+  <text x="60" y="150" fill="#5b6b8f" font-size="12" font-weight="600" letter-spacing="2">SOURCES</text>
+  <g font-size="14" font-weight="500">
+    <g>
+      <rect x="60" y="164" width="150" height="42" rx="9" fill="#9db4ff14" stroke="#9db4ff55"/>
+      <text x="135" y="191" fill="#9db4ff" text-anchor="middle">X</text>
+    </g>
+    <g>
+      <rect x="222" y="164" width="150" height="42" rx="9" fill="#ff8a5b14" stroke="#ff8a5b55"/>
+      <text x="297" y="191" fill="#ff8a5b" text-anchor="middle">Reddit</text>
+    </g>
+    <g>
+      <rect x="384" y="164" width="150" height="42" rx="9" fill="#ff5d7314" stroke="#ff5d7355"/>
+      <text x="459" y="191" fill="#ff5d73" text-anchor="middle">YouTube</text>
+    </g>
+    <g>
+      <rect x="546" y="164" width="150" height="42" rx="9" fill="#c77dff14" stroke="#c77dff55"/>
+      <text x="621" y="191" fill="#c77dff" text-anchor="middle">Instagram</text>
+    </g>
+    <g>
+      <rect x="708" y="164" width="170" height="42" rx="9" fill="#2fd4a714" stroke="#2fd4a755"/>
+      <text x="793" y="191" fill="#2fd4a7" text-anchor="middle">News / Blogs</text>
+    </g>
+  </g>
+  <text x="900" y="191" fill="#5b6b8f" font-size="13">9 languages incl. Hinglish and Kannada-English · 23% of the corpus is code-mixed</text>
+
+  <!-- ============ stages ============ -->
+  <g>
+    <!-- 1. Collect -->
+    <rect x="60" y="252" width="278" height="286" rx="14" fill="#0e1426" stroke="#1e2949"/>
+    <rect x="60" y="252" width="278" height="3" rx="1.5" fill="#6ea8ff"/>
+    <circle cx="88" cy="288" r="13" fill="#6ea8ff22" stroke="#6ea8ff"/>
+    <text x="88" y="293" fill="#6ea8ff" font-size="13" font-weight="700" text-anchor="middle">1</text>
+    <text x="112" y="293" fill="#ffffff" font-size="18" font-weight="600">Collect</text>
+    <text x="84" y="326" fill="#5b6b8f" font-size="11" font-weight="600" letter-spacing="1.4">SERVICES</text>
+    <g fill="#cbd5e1" font-size="13.5">
+      <text x="84" y="350">Platform APIs + crawlers</text>
+      <text x="84" y="374">Redis Streams ingest queue</text>
+      <text x="84" y="398">Language ID + normalisation</text>
+      <text x="84" y="422">PII strip, salted hashing</text>
+      <text x="84" y="446">k-anonymity ≥ 20 on geography</text>
+    </g>
+    <line x1="84" y1="468" x2="314" y2="468" stroke="#1e2949"/>
+    <text x="84" y="490" fill="#5b6b8f" font-size="11" font-weight="600" letter-spacing="1.4">IN THE DEMO</text>
+    <text x="84" y="512" fill="#6ea8ff" font-size="13.5">Live annotated stream</text>
+
+    <!-- 2. Analyse -->
+    <rect x="366" y="252" width="278" height="286" rx="14" fill="#0e1426" stroke="#1e2949"/>
+    <rect x="366" y="252" width="278" height="3" rx="1.5" fill="#c77dff"/>
+    <circle cx="394" cy="288" r="13" fill="#c77dff22" stroke="#c77dff"/>
+    <text x="394" y="293" fill="#c77dff" font-size="13" font-weight="700" text-anchor="middle">2</text>
+    <text x="418" y="293" fill="#ffffff" font-size="18" font-weight="600">Analyse</text>
+    <text x="390" y="326" fill="#5b6b8f" font-size="11" font-weight="600" letter-spacing="1.4">MODELS</text>
+    <g fill="#cbd5e1" font-size="13.5">
+      <text x="390" y="350">RoBERTa sentiment + stance</text>
+      <text x="390" y="374">8-class emotion classifier</text>
+      <text x="390" y="398">IndicBERT for code-mix</text>
+      <text x="390" y="422">Sarcasm / irony resolution</text>
+      <text x="390" y="446">BERTopic · PageRank · Louvain</text>
+    </g>
+    <line x1="390" y1="468" x2="620" y2="468" stroke="#1e2949"/>
+    <text x="390" y="490" fill="#5b6b8f" font-size="11" font-weight="600" letter-spacing="1.4">IN THE DEMO</text>
+    <text x="390" y="512" fill="#c77dff" font-size="13.5">Live analytics · Influence network</text>
+
+    <!-- 3. Predict -->
+    <rect x="672" y="252" width="278" height="286" rx="14" fill="#0e1426" stroke="#1e2949"/>
+    <rect x="672" y="252" width="278" height="3" rx="1.5" fill="#ffb02e"/>
+    <circle cx="700" cy="288" r="13" fill="#ffb02e22" stroke="#ffb02e"/>
+    <text x="700" y="293" fill="#ffb02e" font-size="13" font-weight="700" text-anchor="middle">3</text>
+    <text x="724" y="293" fill="#ffffff" font-size="18" font-weight="600">Predict</text>
+    <text x="696" y="326" fill="#5b6b8f" font-size="11" font-weight="600" letter-spacing="1.4">MODELS</text>
+    <g fill="#cbd5e1" font-size="13.5">
+      <text x="696" y="350">Prophet volume forecast</text>
+      <text x="696" y="374">Virality probability + peak ETA</text>
+      <text x="696" y="398">Emotion phase transition</text>
+      <text x="696" y="422">Cross-platform diffusion</text>
+      <text x="696" y="446">Cascade simulation</text>
+    </g>
+    <line x1="696" y1="468" x2="926" y2="468" stroke="#1e2949"/>
+    <text x="696" y="490" fill="#5b6b8f" font-size="11" font-weight="600" letter-spacing="1.4">IN THE DEMO</text>
+    <text x="696" y="512" fill="#ffb02e" font-size="13.5">Forecast band · Virality · Phases</text>
+
+    <!-- 4. Alert -->
+    <rect x="978" y="252" width="278" height="286" rx="14" fill="#0e1426" stroke="#1e2949"/>
+    <rect x="978" y="252" width="278" height="3" rx="1.5" fill="#ff5d73"/>
+    <circle cx="1006" cy="288" r="13" fill="#ff5d7322" stroke="#ff5d73"/>
+    <text x="1006" y="293" fill="#ff5d73" font-size="13" font-weight="700" text-anchor="middle">4</text>
+    <text x="1030" y="293" fill="#ffffff" font-size="18" font-weight="600">Alert</text>
+    <text x="1002" y="326" fill="#5b6b8f" font-size="11" font-weight="600" letter-spacing="1.4">RULES</text>
+    <g fill="#cbd5e1" font-size="13.5">
+      <text x="1002" y="350">Composite crisis detection</text>
+      <text x="1002" y="374">Misinformation risk scoring</text>
+      <text x="1002" y="398">Coordination detection</text>
+      <text x="1002" y="422">Sentiment velocity triggers</text>
+      <text x="1002" y="446">WebSocket push to clients</text>
+    </g>
+    <line x1="1002" y1="468" x2="1232" y2="468" stroke="#1e2949"/>
+    <text x="1002" y="490" fill="#5b6b8f" font-size="11" font-weight="600" letter-spacing="1.4">IN THE DEMO</text>
+    <text x="1002" y="512" fill="#ff5d73" font-size="13.5">Alert board + simulator</text>
+
+    <!-- 5. Act -->
+    <rect x="1284" y="252" width="256" height="286" rx="14" fill="#0e1426" stroke="#1e2949"/>
+    <rect x="1284" y="252" width="256" height="3" rx="1.5" fill="#2fd4a7"/>
+    <circle cx="1312" cy="288" r="13" fill="#2fd4a722" stroke="#2fd4a7"/>
+    <text x="1312" y="293" fill="#2fd4a7" font-size="13" font-weight="700" text-anchor="middle">5</text>
+    <text x="1336" y="293" fill="#ffffff" font-size="18" font-weight="600">Act</text>
+    <text x="1308" y="326" fill="#5b6b8f" font-size="11" font-weight="600" letter-spacing="1.4">OUTPUTS</text>
+    <g fill="#cbd5e1" font-size="13.5">
+      <text x="1308" y="350">Ranked recommended</text>
+      <text x="1308" y="370">actions, with evidence</text>
+      <text x="1308" y="398">Intelligence brief</text>
+      <text x="1308" y="422">JSON / CSV / PDF export</text>
+      <text x="1308" y="446">Human makes the decision</text>
+    </g>
+    <line x1="1308" y1="468" x2="1516" y2="468" stroke="#1e2949"/>
+    <text x="1308" y="490" fill="#5b6b8f" font-size="11" font-weight="600" letter-spacing="1.4">IN THE DEMO</text>
+    <text x="1308" y="512" fill="#2fd4a7" font-size="13.5">Reports</text>
+  </g>
+
+  <!-- flow arrows between stages -->
+  <g stroke="#3f6fd6" stroke-width="2" marker-end="url(#arrow)">
+    <line x1="340" y1="395" x2="360" y2="395"/>
+    <line x1="646" y1="395" x2="666" y2="395"/>
+    <line x1="952" y1="395" x2="972" y2="395"/>
+    <line x1="1258" y1="395" x2="1278" y2="395"/>
+  </g>
+
+  <!-- sources feed stage 1 -->
+  <path d="M199 214 L199 246" stroke="#2a3858" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ insight fusion band ============ -->
+  <rect x="366" y="566" width="890" height="74" rx="12" fill="#6ea8ff0d" stroke="#3f6fd6aa" stroke-dasharray="6 4"/>
+  <text x="390" y="596" fill="#6ea8ff" font-size="15" font-weight="600">Insight fusion layer</text>
+  <text x="390" y="620" fill="#94a3b8" font-size="13.5">sentiment × emotion × topic × community × influence × time × spread — every driver reported, so the score is explainable</text>
+
+  <!-- ============ storage ============ -->
+  <text x="60" y="694" fill="#5b6b8f" font-size="12" font-weight="600" letter-spacing="2">STORAGE &amp; SERVING</text>
+  <g font-size="13.5">
+    <g>
+      <rect x="60" y="710" width="230" height="56" rx="10" fill="#0e1426" stroke="#1e2949"/>
+      <text x="80" y="734" fill="#ffffff" font-weight="600">TimescaleDB</text>
+      <text x="80" y="754" fill="#8b95b5" font-size="12.5">time-series metrics</text>
+    </g>
+    <g>
+      <rect x="302" y="710" width="230" height="56" rx="10" fill="#0e1426" stroke="#1e2949"/>
+      <text x="322" y="734" fill="#ffffff" font-weight="600">Neo4j</text>
+      <text x="322" y="754" fill="#8b95b5" font-size="12.5">accounts, edges, communities</text>
+    </g>
+    <g>
+      <rect x="544" y="710" width="230" height="56" rx="10" fill="#0e1426" stroke="#1e2949"/>
+      <text x="564" y="734" fill="#ffffff" font-weight="600">Qdrant</text>
+      <text x="564" y="754" fill="#8b95b5" font-size="12.5">post embeddings, near-duplicates</text>
+    </g>
+    <g>
+      <rect x="786" y="710" width="230" height="56" rx="10" fill="#0e1426" stroke="#1e2949"/>
+      <text x="806" y="734" fill="#ffffff" font-weight="600">Redis Streams</text>
+      <text x="806" y="754" fill="#8b95b5" font-size="12.5">ingest and fan-out</text>
+    </g>
+    <g>
+      <rect x="1028" y="710" width="248" height="56" rx="10" fill="#0e1426" stroke="#1e2949"/>
+      <text x="1048" y="734" fill="#ffffff" font-weight="600">FastAPI + WebSocket</text>
+      <text x="1048" y="754" fill="#8b95b5" font-size="12.5">serving layer</text>
+    </g>
+    <g>
+      <rect x="1288" y="710" width="252" height="56" rx="10" fill="#0e1426" stroke="#1e2949"/>
+      <text x="1308" y="734" fill="#ffffff" font-weight="600">React + Vite dashboard</text>
+      <text x="1308" y="754" fill="#8b95b5" font-size="12.5">this demo</text>
+    </g>
+  </g>
+
+  <!-- footer -->
+  <line x1="60" y1="808" x2="1540" y2="808" stroke="#1e2949"/>
+  <text x="60" y="836" fill="#5b6b8f" font-size="12.5">Team VisionX · the demo runs the full pipeline shape on a synthetic corpus; scoring lives in pure functions so the UI can be pointed at the live service unchanged.</text>
+  <text x="60" y="858" fill="#5b6b8f" font-size="12.5">Misinformation and coordination scores are risk indicators for human review, never determinations.</text>
+</svg>

@@ -5,6 +5,7 @@ import { Card, Chip, Meter } from '../components/ui.jsx'
 import NetworkGraph from '../components/NetworkGraph.jsx'
 import { InfluenceTable } from '../components/insight.jsx'
 import { PersonaPanel } from '../components/panels.jsx'
+import { CascadeReplay } from '../components/narrative.jsx'
 import { ACCOUNTS, COMMUNITIES, INFLUENCE_WEIGHTS, influenceScore } from '../data/seed.js'
 import { fmt } from '../data/engine.js'
 
@@ -97,6 +98,8 @@ export default function NetworkPage() {
           </Card>
         </div>
       </div>
+
+      <CascadeReplay topic={topic} />
 
       <div className="grid gap-3 lg:grid-cols-3">
         <InfluenceTable limit={8} />

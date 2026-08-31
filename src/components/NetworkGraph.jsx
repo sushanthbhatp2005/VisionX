@@ -56,7 +56,9 @@ function layout(nodes, edges, iterations = 420) {
   return pos
 }
 
-export default function NetworkGraph({ highlight = [], cascade = false, height = 440 }) {
+// `reached` (an array of account ids) switches the graph into cascade mode:
+// only the accounts a post has already travelled to are lit.
+export default function NetworkGraph({ highlight = [], cascade = false, height = 440, reached = null }) {
   const [hover, setHover] = useState(null)
   const [pinned, setPinned] = useState(null)
   const nodes = useMemo(() => ACCOUNTS.map((a) => ({ ...a, score: influenceScore(a) })), [])
@@ -72,7 +74,11 @@ export default function NetworkGraph({ highlight = [], cascade = false, height =
     return s
   }, [active])
 
-  const dim = (id) => (neighbours && !neighbours.has(id) ? 0.16 : 1)
+  const reachedSet = useMemo(() => (reached ? new Set(reached) : null), [reached])
+  const dim = (id) => {
+    if (reachedSet && !reachedSet.has(id)) return 0.12
+    return neighbours && !neighbours.has(id) ? 0.16 : 1
+  }
   const activeNode = nodes.find((n) => n.id === active)
 
   return (
@@ -90,7 +96,8 @@ export default function NetworkGraph({ highlight = [], cascade = false, height =
         <g>
           {EDGES.map(([a, b, w], i) => {
             const p = pos[a], q = pos[b]
-            const on = !neighbours || (neighbours.has(a) && neighbours.has(b))
+            const bothReached = !reachedSet || (reachedSet.has(a) && reachedSet.has(b))
+            const on = (!neighbours || (neighbours.has(a) && neighbours.has(b))) && bothReached
             const na = nodes.find((n) => n.id === a)
             const nb = nodes.find((n) => n.id === b)
             const suspect = na?.suspicious && nb?.suspicious
@@ -119,7 +126,7 @@ export default function NetworkGraph({ highlight = [], cascade = false, height =
             const p = pos[n.id]
             const comm = COMMUNITIES.find((c) => c.id === n.community)
             const r = 7 + (n.score / 100) * 13
-            const isHi = highlight.includes(n.id)
+            const isHi = reachedSet ? reachedSet.has(n.id) : highlight.includes(n.id)
             return (
               <g
                 key={n.id}
