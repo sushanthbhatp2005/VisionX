@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+
+html, body, #root { height: 100%; }
+
+body {
+  @apply bg-ink-900 text-slate-200 font-sans antialiased;
+  background-image:
+    radial-gradient(900px 500px at 12% -8%, rgba(110,168,255,.12), transparent 60%),
+    radial-gradient(700px 420px at 92% 4%, rgba(255,93,115,.09), transparent 62%);
+  background-attachment: fixed;
+}
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #22304f; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #2e4270; }
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-line bg-ink-800/70 backdrop-blur-sm shadow-lg shadow-black/30;
+  }
+  .card-h {
+    @apply flex items-center justify-between gap-3 px-4 pt-3.5 pb-2;
+  }
+  .card-t {
+    @apply text-[12.5px] font-semibold uppercase tracking-[.12em] text-slate-400;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-md border border-line bg-ink-700/70 px-2 py-0.5 text-[11px] font-medium text-slate-300;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-ink-700 px-3 py-1.5 text-[13px] font-medium text-slate-200 transition hover:border-accent-dim hover:bg-ink-600 active:scale-[.98] disabled:opacity-40 disabled:pointer-events-none;
+  }
+  .btn-primary {
+    @apply border-accent-dim bg-accent-dim/25 text-accent hover:bg-accent-dim/40;
+  }
+  .btn-danger {
+    @apply border-neg/50 bg-neg/15 text-neg hover:bg-neg/25;
+  }
+  .stat {
+    @apply font-mono text-2xl font-semibold tabular-nums tracking-tight text-white;
+  }
+  .label {
+    @apply text-[11px] uppercase tracking-[.14em] text-slate-500;
+  }
+  .scan {
+    background: linear-gradient(90deg, transparent, rgba(110,168,255,.55), transparent);
+  }
+}
+
+.grid-lines {
+  background-image: linear-gradient(rgba(110,168,255,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(110,168,255,.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* The report page is meant to be saved as a PDF from the browser print
+   dialog, which by default drops background graphics -- so flip to ink-on-
+   paper rather than relying on the dark theme surviving. */
+@media print {
+  aside,
+  header.sticky,
+  .print\:hidden {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+    background-image: none !important;
+    color: #12161f !important;
+  }
+  main {
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+  .card {
+    background: #fff !important;
+    border-color: #d8dde6 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+  .chip,
+  [class*="bg-ink-700"],
+  [class*="bg-ink-900"] {
+    background: #f4f6fa !important;
+    border-color: #d8dde6 !important;
+  }
+  .text-white, .text-slate-100, .text-slate-200, .text-slate-300, b {
+    color: #12161f !important;
+  }
+  .text-slate-400, .text-slate-500, .text-slate-600, .label, .card-t {
+    color: #55607a !important;
+  }
+}
