@@ -106,9 +106,13 @@ Claude Code when this folder is opened as the working directory.
 ## Deployment
 
 Every push to `main` builds and publishes to GitHub Pages via
-`.github/workflows/deploy.yml`. The workflow enables Pages on the repo itself
-(`configure-pages` with `enablement: true`), so there is no manual step in
-Settings before the first deploy.
+`.github/workflows/deploy.yml`.
+
+One-time setup, needed before the first deploy succeeds: in the repository,
+go to **Settings → Pages → Build and deployment** and set **Source** to
+**GitHub Actions**. The workflow cannot do this for you — creating a Pages
+site needs `administration` permission, which the default `GITHUB_TOKEN` does
+not have.
 
 Pages serves the site from a subpath, so `vite.config.js` sets
 `base: '/VisionX/'` for builds while leaving the dev server at the root. The app
