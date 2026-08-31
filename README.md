@@ -16,6 +16,15 @@ npm run dev
 
 Then open http://localhost:5173.
 
+The dashboard runs standalone on an in-browser simulation — that is what the
+live link above is. It also speaks to a real [FastAPI backend](backend/) when
+one is running: it probes on load, and the top bar shows **LIVE** or
+**SIMULATED** so you always know which you are looking at.
+
+```bash
+cd backend && pip install -r requirements.txt && uvicorn app.main:app --reload
+```
+
 ## The demo flow
 
 Click **Guided demo** in the top bar. It walks the ten stages of a single
@@ -46,6 +55,24 @@ That last step is the point of the whole demo: analysis becomes a decision.
 | `/compare` | Compare topics — two conversations side by side across every metric |
 | `/alerts` | Alert board with an alert simulator |
 | `/report` | Intelligence brief with JSON / CSV / PDF export |
+
+## Backend
+
+[`backend/`](backend/) is a FastAPI service that serves the identical payload
+shapes, so the UI needs no changes to run against it:
+
+- **WebSocket** `/ws/stream` — snapshot on connect, delta per tick
+- **Real NLP** — XLM-R sentiment and a DistilRoBERTa emotion head, with the
+  rule layer taking over for romanised code-mix and sarcasm where the models
+  measurably under-read
+- **Real ingestion** — Reddit and RSS work with no credentials; YouTube and X
+  take keys
+- **Real stores** — TimescaleDB, Neo4j, Qdrant and Redis via `docker compose`,
+  each falling back to an in-process equivalent independently
+
+Nothing about it is required. With no backend, no models and no containers the
+dashboard behaves exactly as it does on the live link. See
+[`backend/README.md`](backend/README.md).
 
 ## Signature features
 

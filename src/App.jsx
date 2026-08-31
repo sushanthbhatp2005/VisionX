@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import {
   Activity, Radar, Network, Bell, FileText, LayoutDashboard, Pause, Play,
-  RotateCcw, Gauge, Wand2, GitCompare,
+  RotateCcw, Gauge, Wand2, GitCompare, Cloud, CloudOff,
 } from 'lucide-react'
 import { useLive } from './store/LiveContext.jsx'
 import { Dot } from './components/ui.jsx'
@@ -83,8 +83,40 @@ function Sidebar() {
   )
 }
 
+// Says plainly where the data is coming from. 'offline' is not an error
+// state -- the dashboard simulates locally and keeps working.
+function ConnectionPill({ connection }) {
+  const map = {
+    live: {
+      icon: Cloud, color: '#2fd4a7', label: 'LIVE',
+      sub: 'FastAPI backend', title: 'Connected to the FastAPI backend over WebSocket',
+    },
+    connecting: {
+      icon: Cloud, color: '#6ea8ff', label: 'CONNECTING',
+      sub: 'probing backend', title: 'Looking for the backend',
+    },
+    offline: {
+      icon: CloudOff, color: '#8b95b5', label: 'SIMULATED',
+      sub: 'backend offline', title: 'No backend reachable — running the in-browser simulation',
+    },
+  }
+  const s = map[connection] ?? map.offline
+  const Icon = s.icon
+  return (
+    <div
+      className="flex items-center gap-1.5 rounded-lg border px-2.5 py-1"
+      style={{ borderColor: `${s.color}55`, background: `${s.color}12` }}
+      title={s.title}
+    >
+      <Icon size={13} style={{ color: s.color }} />
+      <span className="font-mono text-[11.5px] font-semibold" style={{ color: s.color }}>{s.label}</span>
+      <span className="hidden font-mono text-[11px] text-slate-500 sm:inline">· {s.sub}</span>
+    </div>
+  )
+}
+
 function Topbar() {
-  const { running, setRunning, speed, setSpeed, reset, totals, demoStep, setDemoStep } = useLive()
+  const { running, setRunning, speed, setSpeed, reset, totals, demoStep, setDemoStep, connection } = useLive()
   const { pathname } = useLocation()
   const title = NAV.find((n) => (n.end ? n.to === pathname : pathname.startsWith(n.to)))?.label ?? 'Overview'
 
@@ -101,6 +133,8 @@ function Topbar() {
           {running ? 'STREAMING' : 'PAUSED'} · {totals.processed.toLocaleString()} posts
         </span>
       </div>
+
+      <ConnectionPill connection={connection} />
 
       <div className="ml-auto flex items-center gap-1.5">
         <button

@@ -1,0 +1,16 @@
+# --- core service -----------------------------------------------------------
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+httpx==0.28.1
+feedparser==6.0.11
+
+# --- stores (all optional: the service falls back to in-memory) -------------
+redis==5.2.1
+asyncpg==0.30.0
+neo4j==5.27.0
+qdrant-client==1.12.2
+
+# --- NLP (optional: rule-based annotator is used when these are absent) -----
+# Install with:  pip install -r requirements-nlp.txt

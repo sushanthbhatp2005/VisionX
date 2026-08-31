@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { TOPICS, POSTS } from '../data/seed.js'
 import { buildHistory, buildForecast, nextPoint, synthPost, makeAlert, clamp } from '../data/engine.js'
+import { connectLive } from '../api/live.js'
 
 const LiveContext = createContext(null)
 export const useLive = () => useContext(LiveContext)
@@ -39,17 +40,22 @@ export function LiveProvider({ children }) {
   const [processed, setProcessed] = useState(1284392)
   const [selectedTopic, setSelectedTopic] = useState('traffic')
   const [demoStep, setDemoStep] = useState(-1) // -1 = guided demo not running
+  // 'connecting' | 'live' | 'offline'. 'live' means the FastAPI backend is
+  // driving; anything else means this tab is running its own simulation.
+  const [connection, setConnection] = useState('connecting')
   const firedRef = useRef(new Set())
+  const socketRef = useRef(null)
+  const isLive = connection === 'live'
 
   // ---- the clock ----------------------------------------------------------
   useEffect(() => {
-    if (!running) return
+    if (!running || isLive) return // the backend owns the clock when connected
     const iv = setInterval(() => setTick((n) => n + 1), TICK_MS / speed)
     return () => clearInterval(iv)
-  }, [running, speed])
+  }, [running, speed, isLive])
 
   useEffect(() => {
-    if (tick === 0) return
+    if (tick === 0 || isLive) return
     setTopics((prev) => {
       const next = { ...prev }
       for (const t of TOPICS) {
@@ -83,14 +89,63 @@ export function LiveProvider({ children }) {
 
   // stream posts biased to whichever topic is escalating
   useEffect(() => {
-    if (tick === 0) return
+    if (tick === 0 || isLive) return
     const hot = TOPICS.find((t) => (topics[t.id]?.escalation ?? 0) > 0.2)
     if (!hot) return
     setFeed((f) => [synthPost(hot, topics[hot.id].escalation), ...f].slice(0, 50))
   }, [tick]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ---- the backend, when it is there --------------------------------------
+  // Probe once on mount. A snapshot switches this tab to live mode; anything
+  // else leaves the local simulation running and flags the backend as offline.
+  useEffect(() => {
+    const socket = connectLive({
+      onStatus: setConnection,
+      onSnapshot: (snap) => {
+        setTopics(snap.topics)
+        setFeed(snap.feed)
+        setAlerts(snap.alerts)
+        setProcessed(snap.processed)
+        setTick(snap.tick)
+      },
+      onTick: (delta) => {
+        // an out-of-band post (live ingestion) arrives without topic deltas
+        if (delta.type === 'post') {
+          setFeed((f) => [delta.post, ...f].slice(0, 50))
+          return
+        }
+        setTopics((prev) => {
+          const next = { ...prev }
+          for (const [id, d] of Object.entries(delta.topics ?? {})) {
+            const cur = next[id]
+            if (!cur) continue
+            next[id] = {
+              ...cur,
+              history: [...cur.history.slice(1), d.point],
+              forecast: d.forecast,
+              mentions: d.mentions,
+              growth: d.growth,
+              shift: d.shift,
+              pos: d.pos,
+              neu: d.neu,
+              neg: d.neg,
+            }
+          }
+          return next
+        })
+        if (delta.post) setFeed((f) => [delta.post, ...f].slice(0, 50))
+        if (delta.processed) setProcessed(delta.processed)
+        setTick(delta.tick)
+      },
+      onAlert: (alert) => setAlerts((a) => [alert, ...a].slice(0, 30)),
+    })
+    socketRef.current = socket
+    return () => socket.close()
+  }, [])
+
   // ---- alerts: fired when thresholds are crossed ---------------------------
   const raise = useCallback((topicId, kind) => {
+    if (socketRef.current?.send({ action: 'raise', topic_id: topicId, kind })) return
     const key = `${topicId}:${kind}`
     if (firedRef.current.has(key)) return
     firedRef.current.add(key)
@@ -98,19 +153,24 @@ export function LiveProvider({ children }) {
     setAlerts((a) => [makeAlert(t, kind, { neg: t.sentiment.neg }), ...a].slice(0, 30))
   }, [])
 
-  // seed the board with the standing alerts a real deployment would already have
+  // seed the board with the standing alerts a real deployment would already
+  // have. The backend seeds its own, so skip this when it is driving.
   useEffect(() => {
+    if (connection === 'live') return
     raise('exam', 'misinfo')
     raise('exam', 'coordination')
     raise('water', 'sentiment')
     raise('metro', 'virality')
-  }, [raise])
+  }, [raise, connection])
 
   const escalate = useCallback((topicId, amount = 1) => {
+    if (socketRef.current?.send({ action: 'escalate', topic_id: topicId, amount })) return
     setTopics((prev) => ({ ...prev, [topicId]: { ...prev[topicId], escalation: clamp(amount, 0, 1) } }))
   }, [])
 
   const reset = useCallback(() => {
+    setDemoStep(-1)
+    if (socketRef.current?.send({ action: 'reset' })) return
     firedRef.current = new Set()
     setTopics(initialTopics())
     setAlerts([])
@@ -120,7 +180,7 @@ export function LiveProvider({ children }) {
     raise('exam', 'coordination')
     raise('water', 'sentiment')
     raise('metro', 'virality')
-  }, [raise])
+  }, [raise, connection])
 
   const markAlertsRead = useCallback(() => setAlerts((a) => a.map((x) => ({ ...x, read: true }))), [])
 
@@ -149,6 +209,7 @@ export function LiveProvider({ children }) {
     selectedTopic, setSelectedTopic,
     demoStep, setDemoStep,
     escalate, raise, reset, markAlertsRead,
+    connection, isLive,
   }
 
   return <LiveContext.Provider value={value}>{children}</LiveContext.Provider>

@@ -9,6 +9,11 @@ talk while the app is already open; do not narrate loading.
 - Have `npm run dev` running on the laptop as a fallback if the venue Wi-Fi is bad.
 - Check the top bar reads **STREAMING**. If you rehearsed just before, hit the
   reset button (↺) so numbers start from a clean baseline.
+- Decide whether you are running the backend. The pill next to STREAMING says
+  **LIVE** (FastAPI) or **SIMULATED** (in-browser). Both look identical on
+  stage; LIVE lets you show real ingestion and live NLP, SIMULATED cannot fail.
+  If in doubt, run the backend but be ready to keep going if it dies — the
+  dashboard falls back on its own and the pill just changes.
 - Leave speed at **1x**. Judges read the numbers; 4x makes them jump around.
 
 ---
@@ -66,8 +71,9 @@ do not do all of them.
 **B. Code-mix (Live analytics → Language coverage, or the stream's Code-mixed filter)**
 
 > "'Traffic full jam agide bro' — Kannada-English. 23% of our corpus is
-> code-mixed. Most models score those as neutral and silently drop a quarter
-> of the conversation. IndicBERT recovers sentiment, emotion and stance."
+> code-mixed. XLM-R reads that as *neutral*, because the complaint is carried
+> by the Kannada half — so our lexicon layer overrides it. That's a quarter of
+> the conversation most tools silently drop."
 
 **C. Cascade replay (Influence network → Cascade replay)**
 
@@ -77,7 +83,19 @@ Drag the scrubber from 0.
 > 3.3 million followers. By T+74 it's 24 accounts and 20 million. This is how
 > we know *when* to intervene, not just *whether*."
 
-**D. Coordination (Influence network → Coordination watch)**
+**D. Live NLP (needs the backend running)**
+
+Open http://localhost:8000/docs, POST to `/api/nlp/annotate`, and paste in a
+line of the judge's choosing. Ask them for one.
+
+> "This is the actual model, not a lookup. Give me a sentence." Paste
+> something sarcastic or code-mixed. "Surface positive, resolved negative,
+> sarcasm 99, language Hinglish, routed to the traffic topic."
+
+Then `POST /api/ingest/run` and show real Reddit and news posts arriving,
+annotated, routed. That is the moment it stops looking like a mockup.
+
+**E. Coordination (Influence network → Coordination watch)**
 
 > "Three accounts, near-identical text, 90-second windows. Note the wording —
 > 'potentially coordinated', queued for human review. We don't call them bots.
@@ -94,8 +112,9 @@ Click **Reports**.
 
 Click **JSON** so a file actually downloads. It's a small thing and it lands.
 
-> "Synthetic data today. The scoring layer is pure functions, so pointing this
-> at the live FastAPI service is a one-file change — nothing in the UI moves."
+> "Synthetic corpus, real pipeline. And if I stop the backend right now" —
+> do it — "the pill flips to SIMULATED and nothing else changes. The dashboard
+> degrades instead of dying. That's deliberate."
 
 ---
 
@@ -128,10 +147,11 @@ Click **JSON** so a file actually downloads. It's a small thing and it lands.
 > wrong person."
 
 **"What's not built yet?"**
-> Be straight about it: "The backend. This is the full frontend and the
-> scoring logic running on a synthetic stream. The models named in the
-> architecture are the ones we'd wire in — RoBERTa, IndicBERT, BERTopic,
-> Prophet."
+> Be straight about it: "The corpus is synthetic, and the forecast is a shaped
+> curve rather than a fitted Prophet model. Everything else is real — FastAPI
+> over WebSocket, XLM-R sentiment with a DistilRoBERTa emotion head, live
+> ingestion from Reddit and news feeds, and the storage stack in Docker
+> Compose, though we haven't run those containers end to end yet."
 
 ---
 
@@ -141,6 +161,11 @@ Click **JSON** so a file actually downloads. It's a small thing and it lands.
 - **Numbers look extreme** — someone left the walkthrough running at step 8;
   hit reset (↺).
 - **No internet** — `npm run dev`, then http://localhost:5173. Identical app.
+- **Backend died mid-demo** — nothing to do. The pill flips to SIMULATED and
+  the dashboard keeps running on its own simulation. Say so if anyone notices:
+  "that's the fallback doing its job."
+- **Pill stuck on CONNECTING** — the backend is not up. It retries every 15s;
+  ignore it, everything works.
 - **Nothing loads at all** — the whole thing is static files; there's no
   backend to fall over. Reload the page.
 

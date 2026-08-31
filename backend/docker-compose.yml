@@ -1,0 +1,73 @@
+# The storage stack from the proposal, as real services.
+#
+#   docker compose up -d
+#   cp .env.example .env      # the DSNs below are already filled in there
+#   uvicorn app.main:app --reload
+#
+# The backend does NOT require any of this. With no .env it uses in-process
+# equivalents and says so on /api/health. Bring these up when you want the
+# real thing; every store falls back independently if one is unreachable.
+
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: visionx-timescale
+    environment:
+      POSTGRES_USER: visionx
+      POSTGRES_PASSWORD: visionx
+      POSTGRES_DB: visionx
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U visionx"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  neo4j:
+    image: neo4j:5-community
+    container_name: visionx-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/visionx123
+      NEO4J_server_memory_heap_max__size: 512M
+    ports:
+      - "7474:7474"   # browser
+      - "7687:7687"   # bolt
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:7474 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: visionx-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  redis:
+    image: redis:7-alpine
+    container_name: visionx-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  timescale_data:
+  neo4j_data:
+  qdrant_data:
+  redis_data:

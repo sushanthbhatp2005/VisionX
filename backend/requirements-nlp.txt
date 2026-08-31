@@ -1,0 +1,5 @@
+# Heavy, optional. Without these the service uses the rule-based annotator
+# and reports nlp.backend == "rules" on /api/health.
+torch==2.5.1
+transformers==4.47.1
+sentencepiece==0.2.0

@@ -2,3 +2,11 @@ node_modules
 dist
 .DS_Store
 *.local
+
+# backend
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.env
+backend/*.egg-info/
+.pytest_cache/
