@@ -5,6 +5,10 @@ built as a working intelligence console rather than an informational website:
 the whole thing runs off a live-updating synthetic stream, and every screen is
 part of one pipeline — **Collect → Analyse → Predict → Alert → Act**.
 
+**Live demo: https://sushanthbhatp2005.github.io/VisionX/**
+
+To run it locally:
+
 ```bash
 npm install
 npm run dev
@@ -98,6 +102,20 @@ for the network graph (no heavy graph dependency).
 
 `.claude/launch.json` is a convenience config for launching the dev server from
 Claude Code when this folder is opened as the working directory.
+
+## Deployment
+
+Every push to `main` builds and publishes to GitHub Pages via
+`.github/workflows/deploy.yml`. The workflow enables Pages on the repo itself
+(`configure-pages` with `enablement: true`), so there is no manual step in
+Settings before the first deploy.
+
+Pages serves the site from a subpath, so `vite.config.js` sets
+`base: '/VisionX/'` for builds while leaving the dev server at the root. The app
+uses `HashRouter`, so deep links survive a refresh without any 404 fallback.
+
+`npm run preview` mirrors the deployed path — it serves at
+http://localhost:4173/VisionX/, not the root.
 
 ## A note for the demo
 
