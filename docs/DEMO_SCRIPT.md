@@ -46,7 +46,7 @@ one click each. Say roughly this at each:
 | 4. Emotion resolves to anger | "Eight-class emotion, not a positive/negative slider. Anger plus rising volume escalates. Fear plus rising volume disperses. Different emotion, different response." |
 | 5. The network names the drivers | "PageRank and Louvain, computed by networkx — not numbers we typed in. **Look at this** — the largest account has 8.4 million followers and a PageRank of 0.045. The one at the centre has 612 thousand and 0.077." |
 | 6. It crosses platforms | "Reddit to X in 32 minutes, X to YouTube in 18, YouTube to Instagram in 41 — and sentiment degrades at every hop." |
-| 7. Virality predicted at 87% | "Not 'it's trending'. A probability, a predicted peak of 72k, and a confidence band that widens honestly as it goes further out." |
+| 7. Virality predicted at 87% | "Not 'it's trending'. A probability, a predicted peak, and — look at the badge — a fitted Holt-Winters model on 865 points. That band widens because the residual variance says so, not because we drew it that way." |
 | 8. Crisis risk goes HIGH | "Six signals fire together — spike, negative velocity, emotion intensity, geographic concentration, cross-platform spread, account anomalies. **One** alert, not six notifications." |
 | 9. The system explains why | "The causal chain. Who seeded it, what merged, what amplified it — each weighted. This is the answer to 'why should I believe your score'." |
 | 10. And says what to do next | "Four ranked actions, each with the evidence that produced it. A human still decides. We're decision support, not an oracle." |
@@ -130,6 +130,13 @@ Click **JSON** so a file actually downloads. It's a small thing and it lands.
 
 ## Questions you should expect
 
+**"Is that forecast real or did you draw it?"**
+> Point at the badge. "Holt-Winters, additive trend and daily seasonality,
+> fitted on 865 points by statsmodels. The interval is the fit's residual
+> variance widening with the square root of the horizon. If I stop the backend
+> the badge changes to 'projected curve' — because then it *is* just a curve,
+> and we'd rather say so."
+
 **"Is this real data?"**
 > "No — synthetic, and labelled as such in the footer and in every exported
 > report. The pipeline shape is real; the corpus is generated so the demo is
@@ -157,11 +164,15 @@ Click **JSON** so a file actually downloads. It's a small thing and it lands.
 > wrong person."
 
 **"What's not built yet?"**
-> Be straight about it: "The corpus is synthetic, and the forecast is a shaped
-> curve rather than a fitted Prophet model. Everything else is real — FastAPI
-> over WebSocket, XLM-R sentiment with a DistilRoBERTa emotion head, live
-> ingestion from Reddit and news feeds, and the storage stack in Docker
-> Compose, though we haven't run those containers end to end yet."
+> Be straight about it: "The corpus is synthetic — the conversations are
+> generated, and the nine tracked topics are defined rather than discovered.
+> Topic discovery is the honest gap: BERTopic is the next piece, and it needs
+> ingestion volume we're still accumulating. Everything else runs: FastAPI over
+> WebSocket, XLM-R sentiment with a DistilRoBERTa emotion head, PageRank and
+> Louvain via networkx, a fitted Holt-Winters forecast, coordination detection
+> with calibrated thresholds, and live ingestion from Reddit and news feeds.
+> The Docker storage stack is written but we haven't run the containers end to
+> end."
 
 ---
 

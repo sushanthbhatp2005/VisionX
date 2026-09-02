@@ -16,6 +16,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_settings
+from .forecast import cache as forecast_cache
 from .ingest.service import ingest
 from .routers.api import router as api_router
 from .stores import stores
@@ -55,6 +56,24 @@ async def lifespan(app: FastAPI):
         warm_task = None
         log.info("  nlp backend: rules")
 
+    # Fit the volume forecasts in a worker thread, then refit on a timer. A
+    # seasonal fit is ~1s per topic, so it can never run on the event loop;
+    # until the first fit lands the shaped curve is served and labelled.
+    from .corpus import topics as _topics  # noqa: PLC0415
+
+    async def _forecast_loop():
+        while True:
+            try:
+                await asyncio.to_thread(forecast_cache.refresh_all, _topics(), state.histories())
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                log.exception("forecast refit failed")
+            await asyncio.sleep(settings.forecast_refit_seconds)
+
+    forecast_task = asyncio.create_task(_forecast_loop())
+    log.info("  forecast fitting in background (shaped curve until the first fit)")
+
     if settings.ingest_enabled:
         ingest.start(settings.ingest_interval_seconds)
     else:
@@ -65,6 +84,7 @@ async def lifespan(app: FastAPI):
         yield
     finally:
         task.cancel()
+        forecast_task.cancel()
         if warm_task:
             warm_task.cancel()
         await ingest.stop()

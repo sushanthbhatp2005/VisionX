@@ -5,8 +5,8 @@ import { useLive, useTopic } from '../store/LiveContext.jsx'
 import { Card, Chip, SentimentBar } from '../components/ui.jsx'
 import { EmotionRadar, SentimentTimeline, StanceSplit, VolumeForecast } from '../components/charts.jsx'
 import {
-  ActionEngine, ConversationDNA, CrisisPanel, ForecastStrip, FusionPanel,
-  InfluenceTable, MisinfoPanel, ViralityPanel, WhyTrending,
+  ActionEngine, ConversationDNA, CrisisPanel, ForecastBadge, ForecastStrip,
+  FusionPanel, InfluenceTable, MisinfoPanel, ViralityPanel, WhyTrending,
 } from '../components/insight.jsx'
 import { GeoPanel, Propagation, SarcasmPanel } from '../components/panels.jsx'
 import { EmotionTransitions, RelatedTopics } from '../components/narrative.jsx'
@@ -83,7 +83,7 @@ export default function Explorer() {
       </div>
 
       <div className="grid gap-3 lg:grid-cols-[1fr_1fr]">
-        <Card title="Mention volume & forecast" right={<Chip tone="warn">confidence band</Chip>}>
+        <Card title="Mention volume & forecast" right={<ForecastBadge topic={topic} />}>
           <ForecastStrip topic={topic} />
           <div className="mt-2">
             <VolumeForecast topic={topic} height={214} />

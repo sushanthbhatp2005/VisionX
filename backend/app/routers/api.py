@@ -15,6 +15,7 @@ from ..engine import (
     top_influencers,
     virality_factors,
 )
+from ..forecast import cache as forecast_cache
 from ..ingest.service import ingest, route_to_topic
 from ..nlp.pipeline import get_annotator
 from ..stores import stores
@@ -48,6 +49,7 @@ async def health():
         "accounts": len(C.accounts()),
         "nlp": nlp,
         "stores": stores.status,
+        "forecast": forecast_cache.status(),
         "ingest": await ingest.status(),
     }
 
@@ -88,6 +90,17 @@ async def get_topic(topic_id: str):
         "related": C.related(topic_id),
         "influencers_detail": top_influencers(t),
     }
+
+
+@router.get("/topics/{topic_id}/forecast")
+async def topic_forecast(topic_id: str):
+    """The fitted forecast, with the model and interval it came from."""
+    if not C.topic(topic_id):
+        raise HTTPException(404, f"unknown topic: {topic_id}")
+    f = forecast_cache.get(topic_id)
+    if not f:
+        raise HTTPException(503, "no fit yet — the first refit is still running")
+    return f
 
 
 @router.get("/topics/{topic_id}/cascade")

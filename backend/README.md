@@ -85,6 +85,35 @@ Computing it surfaced a data bug immediately: the edge list contained `a1-a14`
 twice with different weights, so networkx saw 56 edges where the corpus claimed
 57 and the second weight silently won.
 
+## Forecasting
+
+`app/forecast.py` fits Holt-Winters exponential smoothing (additive trend,
+additive daily seasonality) with statsmodels, replacing a shaped curve whose
+confidence band came from `spread = 0.09 + p * 0.28` — it widened because the
+formula said so, not because uncertainty grew.
+
+The interval now comes from the residual variance of the fit and widens with
+√h. On `#TrafficBengaluru` that is roughly ±1100 at one step out and ±3800 at
+twelve, and a smoke test asserts the widening, since a formula band need not.
+
+Daily seasonality needs whole days, so `build_fit_history()` generates a
+three-day series at 5-minute spacing (864 points) shaped by a commute curve —
+civic conversation peaks around 9am and 7pm and collapses overnight. The
+observed window the dashboard is showing is appended to that, rescaled so the
+two are continuous, and the fit sees both.
+
+A seasonal fit is about a second per topic, so it never runs on the event loop:
+fits happen in a worker thread at startup and refit every
+`FORECAST_REFIT_SECONDS` (default 120). Until the first fit lands, the shaped
+curve is served and the UI badge says `projected curve` rather than naming a
+model.
+
+Holt-Winters rather than Prophet deliberately: real prediction intervals, no
+Stan toolchain to compile, and for a few-hour-ahead volume forecast the
+changepoint and holiday machinery is not what limits accuracy. If you need the
+word "Prophet" on a slide, `prophet==1.4.0` installs on this Python — but
+budget minutes for the first-run Stan compile.
+
 ## Coordination detection
 
 `app/coordination.py` replaces what was a hardcoded string — "37 accounts, 82%
@@ -140,6 +169,7 @@ connect, as a hypertable where the extension is available.
 | `GET /api/topics` | all topics with live state and fusion score |
 | `GET /api/topics/{id}` | one topic, with crisis/virality factors and phases |
 | `GET /api/topics/{id}/cascade` | cascade hops derived from the graph |
+| `GET /api/topics/{id}/forecast` | fitted forecast with model, sigma, AIC |
 | `GET /api/network` | accounts with computed PageRank/Louvain/betweenness |
 | `GET /api/network/ranking` | top accounts by any computed measure |
 | `GET /api/coordination` | coordinated-behaviour clusters, computed |

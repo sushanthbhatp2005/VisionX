@@ -6,6 +6,11 @@ pydantic-settings==2.7.1
 httpx==0.28.1
 feedparser==6.0.11
 
+# --- forecasting ------------------------------------------------------------
+# 0.15.0 specifically: 0.14.4 fails to import against pandas 3 (a changed
+# deprecate_kwarg signature).
+statsmodels==0.15.0
+
 # --- network analysis -------------------------------------------------------
 # PageRank, Louvain and betweenness are computed, not authored. scipy is what
 # networkx uses for the sparse-matrix PageRank solver.

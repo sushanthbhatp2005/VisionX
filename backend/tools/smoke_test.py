@@ -53,6 +53,20 @@ async def test_rest(client: httpx.AsyncClient) -> None:
     check("GET /api/topics/traffic/cascade", r.status_code == 200 and len(c) > 5,
           f"{len(c)} hops, span {c[-1]['at']}min")
 
+    r = await client.get(f"{BASE}/api/topics/traffic/forecast")
+    if r.status_code == 503:
+        check("GET /api/topics/traffic/forecast", False, "no fit yet (first refit still running)")
+    else:
+        f = r.json()
+        widths = [p["hi"] - p["lo"] for p in f["points"]]
+        check("GET /api/topics/traffic/forecast", r.status_code == 200 and f["fitted_on"] > 500,
+              f"{f['model']}, fitted on {f['fitted_on']} pts, sigma {f['sigma']}, AIC {f['aic']}")
+        # a fitted interval widens with the horizon; a formula band need not
+        check("prediction interval widens with horizon",
+              widths[-1] > widths[0] * 1.5,
+              f"h=1 width {widths[0]} -> h={len(widths)} width {widths[-1]}")
+        check("forecast is seasonal", f["seasonal"] is True, "daily seasonality fitted")
+
     r = await client.get(f"{BASE}/api/network")
     n = r.json()
     check("GET /api/network", len(n["accounts"]) == 24 and len(n["edges"]) == 56,

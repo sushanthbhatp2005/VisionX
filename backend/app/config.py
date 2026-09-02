@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     port: int = 8000
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173,https://sushanthbhatp2005.github.io"
     tick_seconds: float = 2.6
+    forecast_refit_seconds: int = 120   # a seasonal fit is ~1s per topic
 
     # --- stores -------------------------------------------------------------
     # Empty means "use the in-memory implementation". Set these to point at the

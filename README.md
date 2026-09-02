@@ -62,6 +62,11 @@ That last step is the point of the whole demo: analysis becomes a decision.
 shapes, so the UI needs no changes to run against it:
 
 - **WebSocket** `/ws/stream` — snapshot on connect, delta per tick
+- **Fitted forecasting** — Holt-Winters via statsmodels, refitted on a timer in
+  a worker thread, with real prediction intervals
+- **Computed network analysis** — PageRank, Louvain and betweenness via networkx
+- **Computed coordination detection** — shingle clustering with calibrated
+  thresholds
 - **Real NLP** — XLM-R sentiment and a DistilRoBERTa emotion head, with the
   rule layer taking over for romanised code-mix and sarcasm where the models
   measurably under-read
@@ -80,6 +85,11 @@ dashboard behaves exactly as it does on the live link. See
   what migrated, what merged, what amplified it), each step weighted.
 - **Virality prediction** — probability, predicted peak size, time-to-peak, and
   the six factors that produced the number.
+- **Fitted volume forecast** — Holt-Winters with additive trend and daily
+  seasonality (statsmodels), fitted on a three-day series. The 95% band comes
+  from the fit's residual variance and widens with √h, rather than from a
+  formula. The chart badge names the model and the number of points it was
+  fitted on; standalone it says `projected curve` instead of naming one.
 - **Early crisis detection** — fires on a *combination*: spike + negative
   sentiment velocity + emotion intensity + geographic concentration +
   cross-platform propagation + anomalous account activity.

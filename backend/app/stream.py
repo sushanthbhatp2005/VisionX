@@ -17,6 +17,7 @@ from typing import Any
 from .config import get_settings
 from .corpus import corpus, topics
 from .engine import build_forecast, build_history, clamp, make_alert, next_point
+from .forecast import cache as forecast_cache
 from .nlp.pipeline import get_annotator
 
 log = logging.getLogger("visionx.stream")
@@ -161,9 +162,17 @@ class LiveState:
             cur["history"] = cur["history"][1:] + [point]
 
             growth_delta = ((point["mentions"] - prev_last["mentions"]) / max(prev_last["mentions"], 1)) * 100
-            cur["forecast"] = build_forecast(
-                {**t, "predictedMentions": t["predictedMentions"] * (1 + esc * 0.55)}, cur["history"]
-            )
+            # A fitted forecast if the model has produced one, otherwise the
+            # shaped curve. `forecastModel` tells the UI which it is looking at.
+            fitted = forecast_cache.points(t["id"])
+            if fitted:
+                cur["forecast"] = fitted
+                cur["forecastModel"] = forecast_cache.meta(t["id"])
+            else:
+                cur["forecast"] = build_forecast(
+                    {**t, "predictedMentions": t["predictedMentions"] * (1 + esc * 0.55)}, cur["history"]
+                )
+                cur["forecastModel"] = {"model": "projected curve", "seasonal": False, "fitted_on": 0}
             cur["mentions"] = round(min(cur["mentions"] + point["mentions"] * (0.06 + esc * 0.14),
                                         t["predictedMentions"] * 1.12))
             cur["pos"], cur["neu"], cur["neg"] = point["pos"], point["neu"], point["neg"]
@@ -177,6 +186,7 @@ class LiveState:
                 "shift": cur["shift"],
                 "pos": cur["pos"], "neu": cur["neu"], "neg": cur["neg"],
                 "forecast": cur["forecast"],
+                "forecastModel": cur.get("forecastModel"),
             }
 
             try:
@@ -207,6 +217,10 @@ class LiveState:
             "alerts": self.alerts[:5],
         }
 
+    def histories(self) -> dict[str, list[dict]]:
+        """The observed windows, for the forecaster to fit against."""
+        return {tid: st["history"] for tid, st in self.topics.items()}
+
     def snapshot(self) -> dict:
         return {
             "type": "snapshot",
@@ -217,6 +231,7 @@ class LiveState:
                 tid: {
                     "history": s["history"],
                     "forecast": s["forecast"],
+                    "forecastModel": s.get("forecastModel"),
                     "mentions": s["mentions"],
                     "pos": s["pos"], "neu": s["neu"], "neg": s["neg"],
                     "growth": round(s["growth"], 1),

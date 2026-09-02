@@ -11,7 +11,9 @@ import { mergeSeries, fmt } from '../data/engine.js'
 const axis = { stroke: '#3b4766', fontSize: 10.5, fontFamily: 'JetBrains Mono, monospace', tickLine: false }
 
 /* ------------------------------------------------------------------ *
- * Mention volume: history + Prophet-style forecast with a 90% band.
+ * Mention volume: history + forecast. When the backend is connected the
+ * forecast is a fitted Holt-Winters projection with a 95% prediction
+ * interval; standalone it is a projected curve. The badge says which.
  * ------------------------------------------------------------------ */
 export function VolumeForecast({ topic, height = 250 }) {
   const data = useMemo(() => mergeSeries(topic.live.history, topic.live.forecast), [topic.live])

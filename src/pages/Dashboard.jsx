@@ -4,7 +4,7 @@ import { Activity, ArrowRight, BarChart3, MessageSquare, TrendingUp, Users } fro
 import { useLive, useTopic } from '../store/LiveContext.jsx'
 import { Card, Chip, KpiCard, SentimentBar } from '../components/ui.jsx'
 import { EmotionRadar, PlatformBars, SentimentTimeline, StanceSplit, VolumeForecast } from '../components/charts.jsx'
-import { ForecastStrip } from '../components/insight.jsx'
+import { ForecastBadge, ForecastStrip } from '../components/insight.jsx'
 import { GeoPanel, LanguagePanel } from '../components/panels.jsx'
 import TopicPicker from '../components/TopicPicker.jsx'
 import LiveFeed from '../components/LiveFeed.jsx'
@@ -29,7 +29,7 @@ export default function Dashboard() {
         <div className="space-y-3">
           <Card
             title={`Mention volume & forecast · ${topic.tag}`}
-            right={<Chip tone="warn">Prophet + BERTopic</Chip>}
+            right={<ForecastBadge topic={topic} />}
           >
             <ForecastStrip topic={topic} />
             <div className="mt-2">

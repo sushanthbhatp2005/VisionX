@@ -123,6 +123,7 @@ export function LiveProvider({ children }) {
               ...cur,
               history: [...cur.history.slice(1), d.point],
               forecast: d.forecast,
+              forecastModel: d.forecastModel ?? cur.forecastModel,
               mentions: d.mentions,
               growth: d.growth,
               shift: d.shift,

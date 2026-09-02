@@ -274,6 +274,23 @@ export function ActionEngine({ topic, compact = false }) {
 }
 
 /* ================================================================== *
+ * 7b. Which forecast is actually on screen.
+ * A fitted model and a projected curve look identical on a chart, so the
+ * label has to say which one produced it.
+ * ================================================================== */
+export function ForecastBadge({ topic }) {
+  const m = topic.live?.forecastModel
+  if (!m || !m.fitted_on) {
+    return <Chip tone="warn" title="No fitted model — projected from the current trend">projected curve</Chip>
+  }
+  return (
+    <Chip tone="accent" title={`Fitted on ${m.fitted_on} points · ${m.interval ?? ''} · AIC ${m.aic ?? '—'}`}>
+      {m.model} · {m.fitted_on} pts
+    </Chip>
+  )
+}
+
+/* ================================================================== *
  * 8. Forecast summary strip.
  * ================================================================== */
 export function ForecastStrip({ topic }) {
