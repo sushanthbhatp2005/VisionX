@@ -6,6 +6,12 @@ pydantic-settings==2.7.1
 httpx==0.28.1
 feedparser==6.0.11
 
+# --- network analysis -------------------------------------------------------
+# PageRank, Louvain and betweenness are computed, not authored. scipy is what
+# networkx uses for the sparse-matrix PageRank solver.
+networkx==3.4.2
+scipy==1.14.1
+
 # --- stores (all optional: the service falls back to in-memory) -------------
 redis==5.2.1
 asyncpg==0.30.0

@@ -75,13 +75,13 @@ export const COMMUNITIES = [
 ]
 
 export const EDGES = [
-  ['a1', 'a3', 9], ['a1', 'a6', 8], ['a1', 'a11', 7], ['a1', 'a4', 6], ['a1', 'a14', 5],
+  ['a1', 'a3', 9], ['a1', 'a6', 8], ['a1', 'a11', 7], ['a1', 'a4', 6], ['a1', 'a14', 6],
   ['a3', 'a2', 6], ['a3', 'a9', 5], ['a3', 'a7', 4], ['a3', 'a11', 6],
   ['a4', 'a6', 8], ['a4', 'a15', 4], ['a4', 'a10', 5],
   ['a6', 'a10', 6], ['a6', 'a15', 5], ['a6', 'a11', 4],
   ['a2', 'a8', 7], ['a2', 'a9', 6], ['a2', 'a7', 4],
   ['a8', 'a12', 9], ['a8', 'a13', 9], ['a12', 'a13', 10], ['a8', 'a9', 3],
-  ['a5', 'a14', 7], ['a5', 'a10', 4], ['a14', 'a10', 5], ['a14', 'a1', 6],
+  ['a5', 'a14', 7], ['a5', 'a10', 4], ['a14', 'a10', 5],
   ['a7', 'a15', 3], ['a9', 'a1', 4], ['a11', 'a5', 3], ['a12', 'a3', 2], ['a13', 'a1', 2],
   ['a16', 'a1', 6], ['a16', 'a3', 5], ['a16', 'a14', 7], ['a16', 'a9', 4],
   ['a17', 'a23', 8], ['a17', 'a15', 5], ['a17', 'a9', 4], ['a23', 'a4', 5], ['a23', 'a6', 4],
@@ -637,6 +637,28 @@ export const STREAM_TEMPLATES = [
   { lang: 'Hinglish', text: 'Waah {t} pe itni fast response, record hi ban gaya', s: 'neg', e: 'disgust', sar: 87 },
   { lang: 'English', text: 'Reposting the verified {t} numbers, please stop sharing the edited one.', s: 'neu', e: 'trust', sar: 3 },
   { lang: 'Kannada', text: '{t} bagge sullu suddi haradtha ide, echcharike vahisi', s: 'neu', e: 'fear', sar: 4 },
+]
+
+// A genuine coordinated cluster for the detector to find, rather than a
+// hardcoded "37 accounts" claim. Near-identical text from the amplifier ring
+// inside a tight window; offsetSec is seconds before "now" at load time.
+// @fact_check_kar is deliberately included as a contrast case -- same topic,
+// same minute, different narrative, and it must NOT cluster.
+export const COORDINATED_SAMPLE = [
+  { topic: 'exam', platform: 'x', author: '@news_alert_7788', offsetSec: 300,
+    text: 'BREAKING: answer key leaked before the exam, portal deliberately shut down. Share fast!' },
+  { topic: 'exam', platform: 'x', author: '@daily_forward_99', offsetSec: 288,
+    text: 'BREAKING: answer key leaked before the exam, portal deliberately shut down. Forward to everyone!' },
+  { topic: 'exam', platform: 'instagram', author: '@rumor_mill_24x7', offsetSec: 271,
+    text: 'BREAKING: answer key leaked before the exam, the portal was deliberately shut down. Share fast!' },
+  { topic: 'exam', platform: 'x', author: '@viral_bharat', offsetSec: 254,
+    text: 'Answer key leaked before the exam, portal deliberately shut down. Share fast!' },
+  { topic: 'exam', platform: 'x', author: '@news_alert_7788', offsetSec: 233,
+    text: 'Answer key leaked before the exam and the portal deliberately shut down. Share fast!' },
+  { topic: 'exam', platform: 'instagram', author: '@daily_forward_99', offsetSec: 219,
+    text: 'BREAKING: answer key leaked before the exam, portal deliberately shut down. Forward fast!' },
+  { topic: 'exam', platform: 'x', author: '@fact_check_kar', offsetSec: 240,
+    text: 'The circulating screenshot is edited. Portal uptime log shows no outage after 14:00.' },
 ]
 
 export const HANDLES = [

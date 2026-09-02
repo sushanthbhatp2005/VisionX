@@ -6,6 +6,7 @@ import {
 import { Card, Chip, Meter, ScoreRing, PRIORITY } from './ui.jsx'
 import { crisisFactors, fusionScore, viralityFactors, riskBand, fmt, pct } from '../data/engine.js'
 import { ACCOUNTS, influenceScore } from '../data/seed.js'
+import { COMPUTED_ACCOUNTS, COORDINATION } from '../data/analysis.js'
 
 /* ================================================================== *
  * 1. "Why is this trending?" — the causal chain, not just the number.
@@ -142,7 +143,11 @@ export function MisinfoPanel({ topic }) {
           <AlertTriangle size={14} className="mt-px shrink-0 text-neg" />
           <p className="text-[12px] leading-snug text-slate-300">
             <span className="font-semibold text-neg">Potentially coordinated: </span>
-            37 accounts, 82% identical narratives, posting inside 90-second windows.
+            {COORDINATION.top_cluster
+              ? `${COORDINATION.top_cluster.account_count} accounts, ` +
+                `${COORDINATION.top_cluster.narrative_overlap}% narrative overlap, ` +
+                `posting inside a ${COORDINATION.top_cluster.window_seconds}-second window.`
+              : 'no cluster above threshold in the current window.'}{' '}
             Flagged for human review — not automatically labelled as bots.
           </p>
         </div>
@@ -296,8 +301,8 @@ export function ForecastStrip({ topic }) {
  * 9. Influence leaderboard — deliberately not sorted by followers.
  * ================================================================== */
 export function InfluenceTable({ ids, limit = 6 }) {
-  const rows = (ids ? ACCOUNTS.filter((a) => ids.includes(a.id)) : ACCOUNTS)
-    .map((a) => ({ ...a, score: influenceScore(a) }))
+  const rows = (ids ? COMPUTED_ACCOUNTS.filter((a) => ids.includes(a.id)) : COMPUTED_ACCOUNTS)
+    .map((a) => ({ ...a, score: a.influence }))
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
   const maxFollowers = Math.max(...rows.map((r) => r.followers))
@@ -336,6 +341,7 @@ export function InfluenceTable({ ids, limit = 6 }) {
         </tbody>
       </table>
       <p className="mt-2.5 text-[11px] leading-relaxed text-slate-600">
+        Influence is PageRank-weighted, computed by networkx over the interaction graph.
         The account with the most followers is rarely the one driving the conversation.
       </p>
     </Card>

@@ -6,6 +6,8 @@ from pydantic import BaseModel
 
 from .. import corpus as C
 from ..config import get_settings
+from ..coordination import detect as detect_coordination
+from ..graph import enriched_accounts, metrics as graph_metrics, top_by
 from ..engine import (
     crisis_factors,
     fusion_score,
@@ -98,11 +100,53 @@ async def get_cascade(topic_id: str):
 # --- network ---------------------------------------------------------------
 @router.get("/network")
 async def network():
+    """Accounts with computed structure: PageRank, Louvain, betweenness.
+
+    `centrality` is PageRank normalised to the top-ranked account; the authored
+    value it replaced is kept alongside as `centrality_authored` so the two can
+    be compared on screen.
+    """
+    m = graph_metrics()
     return {
-        "accounts": [{**a, "influence": C.influence_score(a)} for a in C.accounts()],
+        "accounts": enriched_accounts(),
         "edges": C.edges(),
-        "communities": C.communities(),
+        "communities": C.communities(),          # the hand-authored labels
+        "detected_communities": m["communities"],  # what Louvain actually found
+        "graph": {
+            "nodes": m["nodes"],
+            "edges": m["edges"],
+            "density": m["density"],
+            "avg_degree": m["avg_degree"],
+            "components": m["components"],
+            "modularity": m["modularity"],
+        },
+        "computed_by": "networkx",
     }
+
+
+@router.get("/network/ranking")
+async def ranking(measure: str = Query("pagerank", pattern="^(pagerank|betweenness|degree|eigenvector)$"),
+                  limit: int = Query(8, ge=1, le=24)):
+    return {"measure": measure, "ranking": top_by(measure, limit)}
+
+
+@router.get("/coordination")
+async def coordination(topic_id: str | None = None, min_score: int = Query(40, ge=0, le=100)):
+    """Detect coordinated posting, computed over the live feed plus the corpus
+    sample -- rather than the fixed claim this used to be."""
+    import time as _time  # noqa: PLC0415
+
+    now = _time.time()
+    sample = [
+        {**p, "at": int((now - p["offsetSec"]) * 1000)}
+        for p in C.corpus().get("coordinated_sample", [])
+    ]
+    streamed = [p for p in state.feed if p.get("text")]
+    if topic_id:
+        sample = [p for p in sample if p.get("topic") == topic_id]
+        streamed = [p for p in streamed if p.get("topic") == topic_id]
+
+    return detect_coordination(sample + streamed, min_score=min_score)
 
 
 @router.get("/network/neighbours/{account_id}")

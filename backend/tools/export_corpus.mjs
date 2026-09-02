@@ -26,6 +26,7 @@ const payload = {
   influence_weights: seed.INFLUENCE_WEIGHTS,
   topics: seed.TOPICS,
   posts: seed.POSTS,
+  coordinated_sample: seed.COORDINATED_SAMPLE,
   stream_templates: seed.STREAM_TEMPLATES,
   handles: seed.HANDLES,
   city_coords: seed.CITY_COORDS,

@@ -67,6 +67,39 @@ Without them, `NLP_BACKEND=auto` uses the rule annotator and everything still
 works — the rule path is genuinely good on this corpus, because it was written
 for romanised code-mix specifically.
 
+## Network analysis
+
+`app/graph.py` computes structure with networkx rather than asserting it. The
+UI used to display a "PageRank + Louvain" chip over hand-authored numbers;
+these are now the real thing:
+
+- **PageRank** over the weighted interaction graph, normalised against the
+  top-ranked account to give the `centrality` the influence score consumes.
+  The authored value is kept alongside as `centrality_authored` for comparison.
+- **Louvain** community detection, seeded for reproducibility. It finds 4
+  communities where 7 were authored, at modularity 0.45 — and it isolates the
+  amplifier ring at 100% purity without being told those accounts are suspect.
+- **Betweenness** identifies the bridges that carry a topic between clusters.
+
+Computing it surfaced a data bug immediately: the edge list contained `a1-a14`
+twice with different weights, so networkx saw 56 edges where the corpus claimed
+57 and the second weight silently won.
+
+## Coordination detection
+
+`app/coordination.py` replaces what was a hardcoded string — "37 accounts, 82%
+identical narratives, 90-second windows" — with a computation: cluster posts by
+3-word shingle similarity inside a time window, require at least three distinct
+accounts, then score on account count, narrative overlap and timing.
+
+Thresholds are calibrated against measured separation, not guessed. Reworded
+reposts of one narrative score 0.32-0.91 Jaccard against each other; a
+fact-check on the same topic in the same minute scores 0.000 against every one
+of them. The threshold sits at 0.30, inside that gap.
+
+On the corpus it finds 4 accounts, 53% overlap, an 81-second window, score 67 —
+and correctly leaves the fact-check out.
+
 ## Ingestion
 
 **Reddit and RSS need no credentials and pull real posts today.** YouTube and X
@@ -107,7 +140,9 @@ connect, as a hypertable where the extension is available.
 | `GET /api/topics` | all topics with live state and fusion score |
 | `GET /api/topics/{id}` | one topic, with crisis/virality factors and phases |
 | `GET /api/topics/{id}/cascade` | cascade hops derived from the graph |
-| `GET /api/network` | accounts, edges, communities |
+| `GET /api/network` | accounts with computed PageRank/Louvain/betweenness |
+| `GET /api/network/ranking` | top accounts by any computed measure |
+| `GET /api/coordination` | coordinated-behaviour clusters, computed |
 | `GET /api/network/neighbours/{id}` | graph query, through Neo4j when configured |
 | `GET /api/feed` | recent annotated posts |
 | `GET /api/alerts` | the alert board |
@@ -128,12 +163,19 @@ python tools/smoke_test.py
 Exercises every route and the WebSocket against a running server, printing what
 each returned. 18 checks.
 
-## Regenerating the corpus
+## Regenerating the corpus and analysis
 
 The synthetic corpus is exported from the frontend so both sides cannot drift:
 
 ```bash
-node tools/export_corpus.mjs
+node tools/export_corpus.mjs      # src/data/*.js  ->  app/data/corpus.json
+python tools/export_analysis.py   # networkx       ->  src/data/analysis.json
 ```
 
-Re-run after editing `src/data/seed.js` or `src/data/narrative.js`.
+The second one matters: GitHub Pages has no Python, but the dashboard should
+still show *computed* numbers there. So networkx stays the single
+implementation — it runs in the exporter, and the frontend reads the results.
+The backend recomputes the same things live, including whatever has streamed
+in since.
+
+Re-run both after editing `src/data/seed.js` or `src/data/narrative.js`.

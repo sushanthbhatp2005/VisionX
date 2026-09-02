@@ -44,7 +44,7 @@ one click each. Say roughly this at each:
 | 2. A spike is detected | "Volume breaks out of baseline. A keyword dashboard stops here — 'high volume', and that's all it knows." |
 | 3. Sentiment turns negative | "Now it's 80% negative. Still not enough to act on: negative *about what*, driven by *whom*?" |
 | 4. Emotion resolves to anger | "Eight-class emotion, not a positive/negative slider. Anger plus rising volume escalates. Fear plus rising volume disperses. Different emotion, different response." |
-| 5. The network names the drivers | "PageRank and Louvain. **Look at this** — the largest account here has 8.4 million followers and scores 53. The one actually driving it has 612 thousand and scores 92." |
+| 5. The network names the drivers | "PageRank and Louvain, computed by networkx — not numbers we typed in. **Look at this** — the largest account has 8.4 million followers and a PageRank of 0.045. The one at the centre has 612 thousand and 0.077." |
 | 6. It crosses platforms | "Reddit to X in 32 minutes, X to YouTube in 18, YouTube to Instagram in 41 — and sentiment degrades at every hop." |
 | 7. Virality predicted at 87% | "Not 'it's trending'. A probability, a predicted peak of 72k, and a confidence band that widens honestly as it goes further out." |
 | 8. Crisis risk goes HIGH | "Six signals fire together — spike, negative velocity, emotion intensity, geographic concentration, cross-platform spread, account anomalies. **One** alert, not six notifications." |
@@ -95,11 +95,21 @@ line of the judge's choosing. Ask them for one.
 Then `POST /api/ingest/run` and show real Reddit and news posts arriving,
 annotated, routed. That is the moment it stops looking like a mockup.
 
-**E. Coordination (Influence network → Coordination watch)**
+**E. Coordination + Louvain (Influence network)**
 
-> "Three accounts, near-identical text, 90-second windows. Note the wording —
-> 'potentially coordinated', queued for human review. We don't call them bots.
-> We're not willing to be wrong about that automatically."
+Point at the Louvain communities card.
+
+> "We never told it which accounts were suspicious. Louvain grouped the graph
+> on edge weights alone, and the amplifier ring came out as its own community
+> at 100% purity."
+
+Then the coordination watch.
+
+> "Four accounts, 53% narrative overlap, an 81-second window — all computed,
+> not typed in. The threshold is calibrated: reworded reposts score 0.3 to 0.9
+> against each other, and a fact-check on the same topic in the same minute
+> scores zero. And note the wording — 'potentially coordinated', queued for
+> human review. We don't call them bots."
 
 ---
 

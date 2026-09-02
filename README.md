@@ -86,8 +86,18 @@ dashboard behaves exactly as it does on the live link. See
 - **Cross-platform propagation** — origin platform, per-hop delay, volume
   carried, and sentiment degradation along the chain.
 - **Influence score** — reach × engagement × centrality × topic relevance ×
-  amplification. The largest account (8.4M followers, score 53) is deliberately
-  *not* the most influential one (612k followers, score 92).
+  amplification, where centrality is **PageRank computed by networkx** over the
+  interaction graph. The largest account (8.4M followers, PageRank 0.0451)
+  is not the one at the centre (612k followers, PageRank 0.0768). Nothing tells
+  the algorithm that; it falls out of the graph.
+- **Louvain communities** — detected, not assigned. Four communities at
+  modularity 0.45, and the low-quality amplifier ring is isolated at 100%
+  purity without being labelled as suspicious first.
+- **Coordination detection** — computed: posts clustered by 3-word shingle
+  similarity inside a time window, scored on distinct accounts, narrative
+  overlap and timing. Thresholds calibrated against measured separation
+  (coordinated reposts 0.32–0.91 Jaccard; a fact-check on the same topic in the
+  same minute, 0.000).
 - **Indic + code-mix** — Hinglish and Kannada-English handled natively; 23% of
   the corpus is code-mixed.
 - **Sarcasm resolution** — surface sentiment vs. resolved intent, shown side by
@@ -132,6 +142,7 @@ dashboard behaves exactly as it does on the live link. See
 src/
   data/seed.js       synthetic corpus: topics, accounts, edges, posts, geography
   data/narrative.js  emotion phases, topic relationships, cascade derivation
+  data/analysis.json computed PageRank/Louvain/coordination (from networkx)
   data/engine.js     pure simulation + scoring functions (no React)
   store/LiveContext  the clock: ticks the series, streams posts, raises alerts
   components/        charts, insight panels, network graph, live feed

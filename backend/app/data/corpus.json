@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-31T19:33:49.979Z",
+  "generated_at": "2026-09-02T19:55:51.872Z",
   "source": "src/data/seed.js + src/data/narrative.js",
   "platforms": [
     {
@@ -497,7 +497,7 @@
     [
       "a1",
       "a14",
-      5
+      6
     ],
     [
       "a3",
@@ -598,11 +598,6 @@
       "a14",
       "a10",
       5
-    ],
-    [
-      "a14",
-      "a1",
-      6
     ],
     [
       "a7",
@@ -2677,6 +2672,57 @@
       "stance": "oppose",
       "place": "Bengaluru",
       "bot": 3
+    }
+  ],
+  "coordinated_sample": [
+    {
+      "topic": "exam",
+      "platform": "x",
+      "author": "@news_alert_7788",
+      "offsetSec": 300,
+      "text": "BREAKING: answer key leaked before the exam, portal deliberately shut down. Share fast!"
+    },
+    {
+      "topic": "exam",
+      "platform": "x",
+      "author": "@daily_forward_99",
+      "offsetSec": 288,
+      "text": "BREAKING: answer key leaked before the exam, portal deliberately shut down. Forward to everyone!"
+    },
+    {
+      "topic": "exam",
+      "platform": "instagram",
+      "author": "@rumor_mill_24x7",
+      "offsetSec": 271,
+      "text": "BREAKING: answer key leaked before the exam, the portal was deliberately shut down. Share fast!"
+    },
+    {
+      "topic": "exam",
+      "platform": "x",
+      "author": "@viral_bharat",
+      "offsetSec": 254,
+      "text": "Answer key leaked before the exam, portal deliberately shut down. Share fast!"
+    },
+    {
+      "topic": "exam",
+      "platform": "x",
+      "author": "@news_alert_7788",
+      "offsetSec": 233,
+      "text": "Answer key leaked before the exam and the portal deliberately shut down. Share fast!"
+    },
+    {
+      "topic": "exam",
+      "platform": "instagram",
+      "author": "@daily_forward_99",
+      "offsetSec": 219,
+      "text": "BREAKING: answer key leaked before the exam, portal deliberately shut down. Forward fast!"
+    },
+    {
+      "topic": "exam",
+      "platform": "x",
+      "author": "@fact_check_kar",
+      "offsetSec": 240,
+      "text": "The circulating screenshot is edited. Portal uptime log shows no outage after 14:00."
     }
   ],
   "stream_templates": [

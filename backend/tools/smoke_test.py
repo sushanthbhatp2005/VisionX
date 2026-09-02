@@ -55,8 +55,38 @@ async def test_rest(client: httpx.AsyncClient) -> None:
 
     r = await client.get(f"{BASE}/api/network")
     n = r.json()
-    check("GET /api/network", len(n["accounts"]) == 24 and len(n["edges"]) == 57,
-          f"{len(n['accounts'])} accounts, {len(n['edges'])} edges")
+    check("GET /api/network", len(n["accounts"]) == 24 and len(n["edges"]) == 56,
+          f"{len(n['accounts'])} accounts, {len(n['edges'])} edges, "
+          f"modularity {n['graph']['modularity']}")
+    check("network is computed, not authored",
+          n.get("computed_by") == "networkx"
+          and all("pagerank" in a for a in n["accounts"])
+          and len(n["detected_communities"]) > 0,
+          f"{len(n['detected_communities'])} Louvain communities")
+
+    # the argument the demo rests on: PageRank must not simply track followers
+    r = await client.get(f"{BASE}/api/network/ranking?measure=pagerank&limit=24")
+    ranking = r.json()["ranking"]
+    top_pr = ranking[0]
+    biggest = max(ranking, key=lambda x: x["followers"])
+    check("PageRank leader is not the largest account",
+          top_pr["handle"] != biggest["handle"],
+          f"{top_pr['handle']} ({top_pr['followers']:,}) over {biggest['handle']} ({biggest['followers']:,})")
+
+    r = await client.get(f"{BASE}/api/network/ranking?measure=betweenness&limit=3")
+    check("GET /api/network/ranking (betweenness)", r.status_code == 200,
+          ", ".join(x["handle"] for x in r.json()["ranking"]))
+
+    r = await client.get(f"{BASE}/api/coordination")
+    coord = r.json()
+    top = coord.get("top_cluster")
+    check("GET /api/coordination finds the ring",
+          top is not None and top["account_count"] >= 3,
+          f"{top['account_count']} accounts, {top['narrative_overlap']}% overlap, "
+          f"{top['window_seconds']}s window, score {top['score']}" if top else "nothing flagged")
+    check("coordination excludes the fact-check contrast",
+          top is not None and "@fact_check_kar" not in coord["flagged_accounts"],
+          "@fact_check_kar not swept in")
 
     r = await client.get(f"{BASE}/api/network/neighbours/a1")
     check("GET /api/network/neighbours/a1", r.status_code == 200 and len(r.json()) > 0,

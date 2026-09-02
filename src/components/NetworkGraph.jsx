@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { ACCOUNTS, COMMUNITIES, EDGES, PERSONAS, influenceScore } from '../data/seed.js'
+import { COMPUTED_ACCOUNTS, DETECTED_COMMUNITIES, louvainColour } from '../data/analysis.js'
 import { rng, hash, fmt } from '../data/engine.js'
 
 const W = 780
@@ -61,7 +62,8 @@ function layout(nodes, edges, iterations = 420) {
 export default function NetworkGraph({ highlight = [], cascade = false, height = 440, reached = null }) {
   const [hover, setHover] = useState(null)
   const [pinned, setPinned] = useState(null)
-  const nodes = useMemo(() => ACCOUNTS.map((a) => ({ ...a, score: influenceScore(a) })), [])
+  // score and community both come from the computed analysis, not the corpus
+  const nodes = useMemo(() => COMPUTED_ACCOUNTS.map((a) => ({ ...a, score: a.influence })), [])
   const pos = useMemo(() => layout(nodes, EDGES), [nodes])
   const active = pinned ?? hover
   const neighbours = useMemo(() => {
@@ -124,7 +126,7 @@ export default function NetworkGraph({ highlight = [], cascade = false, height =
         <g>
           {nodes.map((n) => {
             const p = pos[n.id]
-            const comm = COMMUNITIES.find((c) => c.id === n.community)
+            const comm = { color: louvainColour(n.louvain) }
             const r = 7 + (n.score / 100) * 13
             const isHi = reachedSet ? reachedSet.has(n.id) : highlight.includes(n.id)
             return (
@@ -156,13 +158,15 @@ export default function NetworkGraph({ highlight = [], cascade = false, height =
 
       {/* legend */}
       <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1.5">
-        {COMMUNITIES.map((c) => (
+        {DETECTED_COMMUNITIES.map((c) => (
           <span key={c.id} className="flex items-center gap-1.5 text-[11.5px] text-slate-400">
             <span className="h-2.5 w-2.5 rounded-full" style={{ background: c.color }} />
             {c.label}
           </span>
         ))}
-        <span className="ml-auto text-[11px] text-slate-600">node size = influence score · click to pin</span>
+        <span className="ml-auto text-[11px] text-slate-600">
+          Louvain communities · node size = PageRank influence · click to pin
+        </span>
       </div>
 
       {/* hover card */}
@@ -177,7 +181,8 @@ export default function NetworkGraph({ highlight = [], cascade = false, height =
             {[
               ['Followers', fmt(activeNode.followers)],
               ['Engagement', `${activeNode.engagement}%`],
-              ['Centrality', activeNode.centrality.toFixed(2)],
+              ['PageRank', activeNode.pagerank?.toFixed(4) ?? '—'],
+              ['Betweenness', activeNode.betweenness?.toFixed(3) ?? '—'],
               ['Amplification', `${activeNode.amplification}x`],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between">
