@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from .. import corpus as C
 from ..config import get_settings
 from ..coordination import detect as detect_coordination
+from ..discovery import cache as discovery_cache
 from ..graph import enriched_accounts, metrics as graph_metrics, top_by
 from ..engine import (
     crisis_factors,
@@ -50,6 +51,7 @@ async def health():
         "nlp": nlp,
         "stores": stores.status,
         "forecast": forecast_cache.status(),
+        "discovery": discovery_cache.status(),
         "ingest": await ingest.status(),
     }
 
@@ -237,6 +239,35 @@ async def annotate(body: AnnotateIn):
 @router.get("/nlp/similar")
 async def similar(text: str = Query(..., min_length=3), limit: int = 5):
     return await stores.vectors.similar(text, limit)
+
+
+# --- topic discovery -------------------------------------------------------
+@router.get("/discovery")
+async def discovery():
+    """Topics discovered from the harvested corpus, rather than defined.
+
+    The nine tracked topics were written down by a person. These were not:
+    BERTopic embedded the harvested news corpus, clustered it, and the labels
+    are the terms that distinguish each cluster.
+    """
+    if not discovery_cache.result:
+        raise HTTPException(
+            503,
+            "no discovery run yet — POST /api/discovery/run (takes a minute or two)",
+        )
+    return discovery_cache.result
+
+
+@router.post("/discovery/run")
+async def discovery_run(min_topic_size: int = Query(8, ge=3, le=50)):
+    """Re-run discovery. Slow (tens of seconds), so it runs in a thread."""
+    import asyncio as _asyncio  # noqa: PLC0415
+
+    if discovery_cache.running:
+        return {"started": False, "reason": "already running", "status": discovery_cache.status()}
+
+    _asyncio.create_task(_asyncio.to_thread(discovery_cache.run, min_topic_size=min_topic_size))
+    return {"started": True, "note": "poll /api/health or /api/discovery"}
 
 
 # --- ingestion -------------------------------------------------------------

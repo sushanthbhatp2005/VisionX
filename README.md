@@ -64,6 +64,7 @@ shapes, so the UI needs no changes to run against it:
 - **WebSocket** `/ws/stream` — snapshot on connect, delta per tick
 - **Fitted forecasting** — Holt-Winters via statsmodels, refitted on a timer in
   a worker thread, with real prediction intervals
+- **Topic discovery** — BERTopic over harvested news, cached and served
 - **Computed network analysis** — PageRank, Louvain and betweenness via networkx
 - **Computed coordination detection** — shingle clustering with calibrated
   thresholds
@@ -100,6 +101,12 @@ dashboard behaves exactly as it does on the live link. See
   interaction graph. The largest account (8.4M followers, PageRank 0.0451)
   is not the one at the centre (612k followers, PageRank 0.0768). Nothing tells
   the algorithm that; it falls out of the graph.
+- **Discovered topics** — BERTopic over a harvested corpus of ~1,000 real news
+  articles: multilingual embeddings → UMAP → HDBSCAN → c-TF-IDF labels, with
+  nothing named in advance. It independently rediscovers topics we do track
+  (`traffic, flyover, metro, corridor`) *and* surfaces ones nobody defined
+  (`ai, openai, meta, google` — the largest cluster in the corpus). 34% is
+  labelled noise rather than forced into a topic.
 - **Louvain communities** — detected, not assigned. Four communities at
   modularity 0.45, and the low-quality amplifier ring is isolated at 100%
   purity without being labelled as suspicious first.

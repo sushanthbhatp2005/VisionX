@@ -163,16 +163,24 @@ Click **JSON** so a file actually downloads. It's a small thing and it lands.
 > thousand and sits at the centre. Follower count would have you brief the
 > wrong person."
 
+**"Where do the topics come from? Did you just pick them?"**
+> "The nine tracked ones, yes — they carry the narrative panels. But scroll
+> down." Open Topic explorer → Discovered topics. "That's BERTopic over a
+> thousand real news articles we harvested. Nothing named in advance. It found
+> our traffic topic on its own, which tells you the clustering is real — and
+> the biggest cluster in the corpus is AI coverage, which nobody on our team
+> thought to track. That's the point: it finds what you didn't think to look
+> for."
+
 **"What's not built yet?"**
-> Be straight about it: "The corpus is synthetic — the conversations are
-> generated, and the nine tracked topics are defined rather than discovered.
-> Topic discovery is the honest gap: BERTopic is the next piece, and it needs
-> ingestion volume we're still accumulating. Everything else runs: FastAPI over
-> WebSocket, XLM-R sentiment with a DistilRoBERTa emotion head, PageRank and
-> Louvain via networkx, a fitted Holt-Winters forecast, coordination detection
-> with calibrated thresholds, and live ingestion from Reddit and news feeds.
-> The Docker storage stack is written but we haven't run the containers end to
-> end."
+> Be straight about it: "The demonstrated conversations are synthetic — we
+> generate them so the demo is reproducible and doesn't expose real people's
+> posts. Everything analysing them is real: FastAPI over WebSocket, XLM-R
+> sentiment with a DistilRoBERTa emotion head, PageRank and Louvain via
+> networkx, a fitted Holt-Winters forecast, calibrated coordination detection,
+> BERTopic discovery over a real harvested corpus, and live ingestion from news
+> feeds. Two honest gaps: we haven't run the Docker storage containers end to
+> end, and X and YouTube ingestion need API keys we don't have."
 
 ---
 

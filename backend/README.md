@@ -60,8 +60,15 @@ Models are ~1.4 GB and download on first run. They load in a background thread,
 so startup is instant and the rule annotator serves until they are ready.
 
 ```bash
-pip install -r requirements-nlp.txt   # torch + transformers
+pip install -r requirements-nlp.txt   # torch, transformers, BERTopic
 ```
+
+That file carries a version lock worth reading before you bump anything:
+`umap-learn` and `hdbscan` both call scikit-learn's
+`check_array(force_all_finite=...)`, which was renamed in scikit-learn 1.6 and
+removed in 1.9. umap 0.5.12 uses the new name, hdbscan 0.8.40 the old one, so
+they cannot both work against a single scikit-learn. The pinned trio
+(scikit-learn 1.5.2, umap-learn 0.5.7, hdbscan 0.8.40) agrees.
 
 Without them, `NLP_BACKEND=auto` uses the rule annotator and everything still
 works — the rule path is genuinely good on this corpus, because it was written
@@ -129,6 +136,50 @@ of them. The threshold sits at 0.30, inside that gap.
 On the corpus it finds 4 accounts, 53% overlap, an 81-second window, score 67 —
 and correctly leaves the fact-check out.
 
+## Topic discovery
+
+The nine tracked topics are *defined* — someone wrote them down — and ingested
+posts were only ever *routed* to one by keyword. `app/discovery.py` answers the
+question that left open: where do topics come from in the first place?
+
+BERTopic over a harvested news corpus: embed with
+`paraphrase-multilingual-MiniLM-L12-v2` (multilingual on purpose — a
+monolingual model buries code-mix in the outlier cluster), reduce with UMAP,
+cluster with HDBSCAN, label each cluster by c-TF-IDF. Nothing is named in
+advance.
+
+On 1,014 harvested articles it finds 24 topics and calls 34% of the corpus
+noise, which is HDBSCAN doing its job rather than forcing every document
+somewhere. Results include:
+
+| size | terms | |
+| --- | --- | --- |
+| 166 | ai, openai, meta, google | untracked |
+| 47 | traffic, flyover, metro, corridor | matches the tracked traffic topic |
+| 31 | food, fda, safety, fssai | untracked |
+| 31 | court, plea, supreme court | untracked |
+
+Both halves matter: it independently rediscovers a topic we do track, which
+says the clustering is not noise, and it surfaces conversations nobody defined,
+which is the entire point.
+
+Discovery runs on the *harvested* corpus, never the synthetic one — clustering
+generated text would only rediscover the templates it was generated from.
+
+```bash
+python tools/harvest.py --limit 100 --append   # accumulate documents
+python tools/export_discovery.py               # cluster and cache the result
+```
+
+A run takes about a minute, so it is never done at request time: the exported
+result is loaded at startup and served from cache. `POST /api/discovery/run`
+re-runs it in a thread.
+
+**Reddit note:** the harvester hits RSS and Reddit, but Reddit 403-blocks an IP
+that fetches many subreddits in quick succession. The collector paces requests
+now; if Reddit returns 403 for everything, that has happened and RSS carries
+the harvest alone (which is where all 1,014 documents came from).
+
 ## Ingestion
 
 **Reddit and RSS need no credentials and pull real posts today.** YouTube and X
@@ -170,6 +221,8 @@ connect, as a hypertable where the extension is available.
 | `GET /api/topics/{id}` | one topic, with crisis/virality factors and phases |
 | `GET /api/topics/{id}/cascade` | cascade hops derived from the graph |
 | `GET /api/topics/{id}/forecast` | fitted forecast with model, sigma, AIC |
+| `GET /api/discovery` | topics discovered by BERTopic, from cache |
+| `POST /api/discovery/run` | re-run discovery in a worker thread |
 | `GET /api/network` | accounts with computed PageRank/Louvain/betweenness |
 | `GET /api/network/ranking` | top accounts by any computed measure |
 | `GET /api/coordination` | coordinated-behaviour clusters, computed |

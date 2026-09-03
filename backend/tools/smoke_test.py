@@ -67,6 +67,23 @@ async def test_rest(client: httpx.AsyncClient) -> None:
               f"h=1 width {widths[0]} -> h={len(widths)} width {widths[-1]}")
         check("forecast is seasonal", f["seasonal"] is True, "daily seasonality fitted")
 
+    r = await client.get(f"{BASE}/api/discovery")
+    if r.status_code == 503:
+        check("GET /api/discovery", False, "no discovery run cached")
+    else:
+        d = r.json()
+        untracked = [t for t in d["topics"] if not t["nearest_tracked"]]
+        check("GET /api/discovery", d["ok"] and d["topics_found"] > 5,
+              f"{d['topics_found']} topics from {d['documents']} docs, "
+              f"{d['outlier_share'] * 100:.0f}% noise")
+        # the point of discovery: finding conversations nobody defined
+        check("discovery finds untracked conversations", len(untracked) > 0,
+              f"{len(untracked)} match none of the 9 tracked topics")
+        # and it should still rediscover what we do track, or it is just noise
+        check("discovery also rediscovers tracked topics",
+              len(untracked) < d["topics_found"],
+              f"{d['topics_found'] - len(untracked)} line up with tracked topics")
+
     r = await client.get(f"{BASE}/api/network")
     n = r.json()
     check("GET /api/network", len(n["accounts"]) == 24 and len(n["edges"]) == 56,

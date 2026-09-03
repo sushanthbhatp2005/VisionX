@@ -55,9 +55,14 @@ class RedditCollector(Collector):
         out: list[RawPost] = []
         per = max(1, limit // max(len(self.subreddits), 1))
         async with httpx.AsyncClient(timeout=12, headers={"User-Agent": UA}) as client:
-            for sub in self.subreddits:
+            for i, sub in enumerate(self.subreddits):
+                # Reddit 403-blocks an IP that fetches many subreddits back to
+                # back. Pace them; a slow harvest beats a blocked one.
+                if i:
+                    await asyncio.sleep(1.5)
                 try:
-                    r = await client.get(f"https://www.reddit.com/r/{sub}/new.json", params={"limit": per})
+                    r = await client.get(f"https://www.reddit.com/r/{sub}/new.json",
+                                         params={"limit": min(per, 50)})
                     r.raise_for_status()
                     for child in r.json().get("data", {}).get("children", []):
                         d = child.get("data", {})

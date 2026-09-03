@@ -1,0 +1,878 @@
+{
+ "ok": true,
+ "documents": 1014,
+ "topics_found": 24,
+ "outliers": 342,
+ "outlier_share": 0.337,
+ "min_topic_size": 8,
+ "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+ "elapsed_seconds": 58.9,
+ "topics": [
+  {
+   "id": 0,
+   "label": "ai, openai, meta",
+   "keywords": [
+    "ai",
+    "openai",
+    "meta",
+    "google",
+    "anthropic",
+    "billion",
+    "settlement",
+    "model"
+   ],
+   "scores": [
+    0.4552,
+    0.3821,
+    0.3766,
+    0.3604,
+    0.3551,
+    0.3161,
+    0.3112,
+    0.3112
+   ],
+   "size": 166,
+   "share": 0.164,
+   "samples": [
+    "\"Excited To See India Build A Local AI Economy\": Nvidia CEO Jensen Huang's Message. Mr Huang said AI represents the beginning of a new technology platform.",
+    "Can 'Naughty Boy' Help Redeem ISRO's 'Lost' Sheen? Big Launch Tonight. EOS-05 is India's first Earth-observation imaging satellite intended for a geosynchronous",
+    "Rights Panel Seeks Answers Over Instagram Ads Linked To Child Abuse Material. A bench of the National Human Rights Commission (NHRC) headed by Priyank Kanoongo "
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 1,
+   "label": "rahul, congress, rahul gandhi",
+   "keywords": [
+    "rahul",
+    "congress",
+    "rahul gandhi",
+    "gandhi",
+    "protest",
+    "2029",
+    "vijay",
+    "resignation"
+   ],
+   "scores": [
+    0.4657,
+    0.4474,
+    0.4309,
+    0.4106,
+    0.4016,
+    0.3915,
+    0.3784,
+    0.3699
+   ],
+   "size": 49,
+   "share": 0.048,
+   "samples": [
+    "Congress protests against filing of FIR against Rahul Gandhi",
+    "Dissolve Karnataka Assembly and face polls, Vijayendra challenges government. BJP State president says people will decide the fate of the Congress government; a",
+    "Celebration of birth centenary of Cuban leader Fidel Castro in Dharwad. Among other things, journalist Siddanagouda Patil recalled his visit to Cuba, spoke of C"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 2,
+   "label": "traffic, flyover, metro",
+   "keywords": [
+    "traffic",
+    "flyover",
+    "metro",
+    "corridor",
+    "city",
+    "wheelers",
+    "diversions",
+    "road"
+   ],
+   "scores": [
+    0.5579,
+    0.5033,
+    0.5033,
+    0.4842,
+    0.4093,
+    0.4064,
+    0.4064,
+    0.3993
+   ],
+   "size": 47,
+   "share": 0.046,
+   "samples": [
+    "NITI Aayog tells Karnataka to consider building a \u2018second Bengaluru\u2019 to ease pressure on capital. The NITI Aayog has suggested that the Karnataka government con",
+    "Bengaluru ranks 17th among world\u2019s best cities for nightlife in Time Out 2026 survey. The ranking, published recently, was based on responses from more than 24,",
+    "After missing deadline, Bengaluru\u2019s Namma Metro Pink Line\u2019s 7.5-km stretch ready, inauguration expected in September. The Pink Line, a 21.3-km corridor connecti"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": "traffic",
+   "nearest_score": 0.25
+  },
+  {
+   "id": 3,
+   "label": "teachers, health, result",
+   "keywords": [
+    "teachers",
+    "health",
+    "result",
+    "neet",
+    "mental health",
+    "learning",
+    "lab",
+    "medical"
+   ],
+   "scores": [
+    0.4465,
+    0.404,
+    0.4002,
+    0.3705,
+    0.3496,
+    0.3496,
+    0.3496,
+    0.3449
+   ],
+   "size": 43,
+   "share": 0.042,
+   "samples": [
+    "When Will NEET PG 2026 Result Be Released? Check Expected Date And Time. NEET PG 2026 result is expected by September 30 after the August 30 exam.",
+    "Two Days To Go For National Teachers Award 2026: Check Complete List. Teachers Day 2026: The nominations for the national awards were invited online. (File phot",
+    "Applications Open For Navodaya Lateral Entry Selection Test For Class 9, 11 Admissions. Navodaya Schools Admissions 2027: The selection test for admission will "
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": "health",
+   "nearest_score": 0.25
+  },
+  {
+   "id": 4,
+   "label": "prices, 94, trade",
+   "keywords": [
+    "prices",
+    "94",
+    "trade",
+    "kg",
+    "early",
+    "bank",
+    "markets",
+    "oil"
+   ],
+   "scores": [
+    0.6231,
+    0.4936,
+    0.4588,
+    0.4588,
+    0.4444,
+    0.4351,
+    0.4303,
+    0.4144
+   ],
+   "size": 34,
+   "share": 0.034,
+   "samples": [
+    "Delhi government to sell onions at \u20b935 a kg amid surge in prices",
+    "Oriental Hotels to merge with Tata Group\u2019s IHCL. The Scheme of Arrangement proposes a share exchange ratio of 25 IHCL shares for every 117 OHL shares and is an ",
+    "Sensex, Nifty rebound in early trade after 3-day slide; bank stocks lead recovery. Tata Steel, Adani Ports, Axis Bank, ICICI Bank, State Bank of India, HDFC Ban"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 5,
+   "label": "food, fda, safety",
+   "keywords": [
+    "food",
+    "fda",
+    "safety",
+    "fssai",
+    "hygiene",
+    "violations",
+    "healthy",
+    "crackdown"
+   ],
+   "scores": [
+    0.7114,
+    0.5423,
+    0.517,
+    0.5072,
+    0.4829,
+    0.4287,
+    0.421,
+    0.3972
+   ],
+   "size": 31,
+   "share": 0.031,
+   "samples": [
+    "Bengaluru\u2019s September food guide brings new menus, Italian plates, and coastal flavours. From Phurr\u2019s new vegetarian menu and Beyond Bean\u2019s all-day breakfast to",
+    "Chicken shops in Bengaluru to shut over waste disposal fee",
+    "Karnataka bakeries body welcomes food safety drive, says training provided to those working in sweet shops, cafes"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 6,
+   "label": "court, plea, supreme court",
+   "keywords": [
+    "court",
+    "plea",
+    "supreme court",
+    "supreme",
+    "stalin",
+    "justice",
+    "high court",
+    "chief justice"
+   ],
+   "scores": [
+    0.5016,
+    0.4924,
+    0.4477,
+    0.4477,
+    0.422,
+    0.4163,
+    0.4081,
+    0.4018
+   ],
+   "size": 31,
+   "share": 0.031,
+   "samples": [
+    "Court Setback For MK Stalin Over Poll Defeat In Stronghold Kolathur. TVK's VS Babu defeated MK Stalin by 8,795 votes, polling 82,997 votes against Stalin's 74,2",
+    "Court grants bail to Priyank Kharge, Nalapad in RSS defamation case. The 42nd Special Court for Elected Representatives granted bail to Priyank Kharge and Moham",
+    "Supreme Court rules that BCI has no power to punish law students. The petition said\u00a0the BCI letters created a chilling effect on the freedom of speech and expre"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 7,
+   "label": "woman, dead, kills",
+   "keywords": [
+    "woman",
+    "dead",
+    "kills",
+    "twin",
+    "hotel",
+    "murder",
+    "representational",
+    "husband"
+   ],
+   "scores": [
+    0.7664,
+    0.5722,
+    0.5554,
+    0.5554,
+    0.5168,
+    0.4846,
+    0.4688,
+    0.4688
+   ],
+   "size": 29,
+   "share": 0.029,
+   "samples": [
+    "Woman Stabbed To Death By Lover At Delhi Hotel, Accused Attempts Suicide. Further probe is underway, say officials (Representational)",
+    "Thar Rams Bike In Delhi, Kills Couple On The Spot. The Thar driver was caught by locals and handed over to the police.",
+    "Woman drowns four-month-old twin daughters, attempts to kill self in Bengaluru. The couple had undergone IVF treatment, following which Umadevi gave birth to tw"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 8,
+   "label": "nepal, floods, rain",
+   "keywords": [
+    "nepal",
+    "floods",
+    "rain",
+    "storm",
+    "nepal floods",
+    "risk",
+    "related",
+    "killed"
+   ],
+   "scores": [
+    0.8222,
+    0.6352,
+    0.5627,
+    0.5409,
+    0.4873,
+    0.4684,
+    0.4684,
+    0.4492
+   ],
+   "size": 27,
+   "share": 0.027,
+   "samples": [
+    "Nepal floods: At least 13 people from Karnataka yet to be traced, says CM",
+    "Nepal floods: \u2018Bodies buried in slush, families refusing food\u2019, Khalsa Aid volunteers witness devastation. From mud-swallowed homes and makeshift mortuaries to ",
+    "\u2018Two buses ahead were swept away\u2019: Karnataka man recounts lucky escape in Nepal floods"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": "flood",
+   "nearest_score": 0.12
+  },
+  {
+   "id": 9,
+   "label": "culture, music, chennai",
+   "keywords": [
+    "culture",
+    "music",
+    "chennai",
+    "mother",
+    "onam",
+    "traditions",
+    "theatre",
+    "heritage"
+   ],
+   "scores": [
+    0.5879,
+    0.5879,
+    0.5864,
+    0.5717,
+    0.4962,
+    0.4962,
+    0.4962,
+    0.4554
+   ],
+   "size": 26,
+   "share": 0.026,
+   "samples": [
+    "D.K. Shivakumar calls women original creators in epics and in contemporary society. Sita\u2019s epic role is a more powerful than that of Ram, says Chief Minister",
+    "Hands-on pottery workshops for kids and adults in Mysuru",
+    "From Harappa to Early Renaissance Florence: One Mother, Many Mother Tongues in NGMA Bengaluru. One Mother, Many Mother Tongues, a new exhibition at the National"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 10,
+   "label": "voters, draft, roll",
+   "keywords": [
+    "voters",
+    "draft",
+    "roll",
+    "electoral",
+    "draft electoral",
+    "sir",
+    "names",
+    "draft roll"
+   ],
+   "scores": [
+    0.6327,
+    0.619,
+    0.6061,
+    0.5876,
+    0.5599,
+    0.5521,
+    0.5205,
+    0.5052
+   ],
+   "size": 21,
+   "share": 0.021,
+   "samples": [
+    "Mansoor Ali Khan\u2019s Mahadevapura voter-roll complaint forwarded to ECI",
+    "SIR: Voters without Aadhaar unable to submit Form-6, risks exclusion. As per ECI guidelines, while filing Form-6, a voter can either provide their Aadhaar detai",
+    "Special SIR campaign: Many polling stations in Bengaluru locked on day BLOs were told by ECI to help voters find names in draft electoral rolls. Multiple people"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 11,
+   "label": "ram, trust, mishra",
+   "keywords": [
+    "ram",
+    "trust",
+    "mishra",
+    "ceo",
+    "air",
+    "temple",
+    "appointed",
+    "retired"
+   ],
+   "scores": [
+    0.7687,
+    0.7197,
+    0.6875,
+    0.6144,
+    0.6103,
+    0.5688,
+    0.534,
+    0.4875
+   ],
+   "size": 19,
+   "share": 0.019,
+   "samples": [
+    "Former Karnataka Chief Minister Siddaramaiah backs campus Shudra Seva Sanghas to nurture new OBC leadership. Initially, the Sanghas plan to take up issues direc",
+    "NAARM must focus on developing leaders, says former D-G of ICAR",
+    "Sandhya Devanathan exits Meta after a decade; to join OpenAI as VP South East Asia, Australia. Sandhya Devanathan, is leaving the social media giant and is all "
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 12,
+   "label": "salian, disha salian, disha",
+   "keywords": [
+    "salian",
+    "disha salian",
+    "disha",
+    "death",
+    "cbi",
+    "bombay",
+    "discrepancies",
+    "probe"
+   ],
+   "scores": [
+    0.7427,
+    0.7427,
+    0.7427,
+    0.6364,
+    0.6269,
+    0.5544,
+    0.5441,
+    0.5427
+   ],
+   "size": 17,
+   "share": 0.017,
+   "samples": [
+    "Issue birth, death certificates at Hubballi-Dharwad Municipal Corporation office from today: Vinay Kulkarni to officials",
+    "Poison, a pillow, 99 calls: How a \u2018natural death\u2019 turned into a murder plot in Karnataka",
+    "Karnataka poacher shooting row: Retired forest officers back staff, seek fair probe"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 13,
+   "label": "flight, pilot, abhinandan",
+   "keywords": [
+    "flight",
+    "pilot",
+    "abhinandan",
+    "cargo",
+    "air",
+    "operations",
+    "regional",
+    "passengers"
+   ],
+   "scores": [
+    0.8859,
+    0.743,
+    0.6533,
+    0.6533,
+    0.6202,
+    0.5831,
+    0.5658,
+    0.5439
+   ],
+   "size": 16,
+   "share": 0.016,
+   "samples": [
+    "Pilot Felt Unwell Mid-Air, Doha-Bengaluru IndiGo Flight Diverts To Muscat. The airline further said it was providing refreshments and regular updates to passeng",
+    "\u2018Mayday emergency\u2019: IndiGo Doha-Bengaluru flight diverts to Muscat after pilot falls ill mid-air. An IndiGo flight traveling from Doha to Bengaluru had to make ",
+    "IndiGo Doha-Bengaluru flight diverted to Muscat after pilot falls ill. The flight, 6E 1302, took off from Doha at 2:19 a.m. and landed in Muscat at 5:30 a.m. lo"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 14,
+   "label": "rajasthan, arrested, ips officer",
+   "keywords": [
+    "rajasthan",
+    "arrested",
+    "ips officer",
+    "businessman",
+    "ips",
+    "person",
+    "running",
+    "arrest"
+   ],
+   "scores": [
+    0.6189,
+    0.5348,
+    0.5225,
+    0.5225,
+    0.5225,
+    0.4936,
+    0.453,
+    0.4377
+   ],
+   "size": 16,
+   "share": 0.016,
+   "samples": [
+    "Juvenile held by Bengaluru police for posing as IAS, IPS officer online to cheat many. The accused reportedly sent friend requests to acquaintances and members ",
+    "Analyst at private firm arrested for running illegal hookah bar in Bengaluru. He, along with another person, were allegedly running a hookah facility on the fir",
+    "Bengaluru businessman reported \u2018abducted\u2019; Andhra Police say they arrested him"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 15,
+   "label": "religious, muslim, women",
+   "keywords": [
+    "religious",
+    "muslim",
+    "women",
+    "remarks",
+    "kerala",
+    "anti",
+    "matters",
+    "involving"
+   ],
+   "scores": [
+    0.622,
+    0.622,
+    0.575,
+    0.5179,
+    0.5164,
+    0.5003,
+    0.4877,
+    0.4877
+   ],
+   "size": 15,
+   "share": 0.015,
+   "samples": [
+    "Maharashtra, NTM-CIIL join hands for translation work. 500 Marathi books proposed for translation into Indian and foreign languages under \u2018Viksit Maharashtra 20",
+    "Sunni Mahallu Federation urges Kanthapuram critics to stop interfering in religious matters. \u2018Religious scholars issue rulings for believers who follow them, an",
+    "Row over Kanthapuram directive limiting women\u2019s public participation grows as Samastha defends \u2018right to preach\u2019. Syed Mohammed Jifri Muthukoya Thangal, leader "
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 16,
+   "label": "sco, iran, declaration",
+   "keywords": [
+    "sco",
+    "iran",
+    "declaration",
+    "bold",
+    "opinion",
+    "pm modi",
+    "modi",
+    "bangladesh"
+   ],
+   "scores": [
+    0.7707,
+    0.6917,
+    0.5819,
+    0.5819,
+    0.5819,
+    0.5812,
+    0.572,
+    0.5498
+   ],
+   "size": 14,
+   "share": 0.014,
+   "samples": [
+    "BJP seeks probe into attacks, vandalism",
+    "Jaishankar heads to Ukraine, Poland to discuss \u2018issues of mutual interest\u2019",
+    "SCO declaration: Double standards in fight against terrorism unacceptable"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 17,
+   "label": "gdp, growth, economic",
+   "keywords": [
+    "gdp",
+    "growth",
+    "economic",
+    "economy",
+    "capacity",
+    "services",
+    "resilience",
+    "heat"
+   ],
+   "scores": [
+    0.7535,
+    0.7223,
+    0.5439,
+    0.5302,
+    0.504,
+    0.4742,
+    0.4626,
+    0.4469
+   ],
+   "size": 13,
+   "share": 0.013,
+   "samples": [
+    "India crosses 300 GW non-fossil capacity, on track for 500 GW by 2030: Pralhad Joshi. As of July 31, India had 300.50 GW of installed non-fossil fuel capacity, ",
+    "India services activity expands in August, pace of growth cools to over 4-year low: PMI. The seasonally adjusted HSBC India Services PMI Business Activity Index",
+    "Endurance test: On the Indian economy\u2019s resilience. The quarters ahead will test the stamina of India\u2019s economic resilience"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 18,
+   "label": "workers, noida, struggle",
+   "keywords": [
+    "workers",
+    "noida",
+    "struggle",
+    "state government",
+    "noida workers",
+    "protest",
+    "demands",
+    "kashmir"
+   ],
+   "scores": [
+    0.8111,
+    0.7198,
+    0.5914,
+    0.5914,
+    0.5587,
+    0.5459,
+    0.5334,
+    0.5128
+   ],
+   "size": 11,
+   "share": 0.011,
+   "samples": [
+    "More wards, same workforce: GBA, corporations struggle to deliver on the ground. The State government replaced the Bruhat Bengaluru Mahanagara Palike Act, 2020,",
+    "Regularisation, clearance of pending dues: Why irrigation workers in Karnataka are protesting",
+    "Four months after Noida protest, workers struggle financially, unable to find jobs. Costs of securing bail, procuring legal documents and pursuing their cases h"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 19,
+   "label": "trafficking, seized, hybrid",
+   "keywords": [
+    "trafficking",
+    "seized",
+    "hybrid",
+    "ed raids",
+    "icu",
+    "searches",
+    "residence",
+    "drugs"
+   ],
+   "scores": [
+    0.7663,
+    0.7209,
+    0.6623,
+    0.6623,
+    0.6623,
+    0.6623,
+    0.6257,
+    0.6257
+   ],
+   "size": 11,
+   "share": 0.011,
+   "samples": [
+    "Bengaluru: East Division police check 575 shops near schools, colleges; 4 drug cases booked",
+    "Fake ICU drugs seizure: Karnataka sets up 6-member SIT to probe statewide racket",
+    "Fake ICU medicines among Rs 4.9-cr spurious drugs seized in Bengaluru raid"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 20,
+   "label": "hospital, teacher, student",
+   "keywords": [
+    "hospital",
+    "teacher",
+    "student",
+    "polavaram",
+    "school",
+    "hostel",
+    "jumps",
+    "sun"
+   ],
+   "scores": [
+    0.6702,
+    0.6122,
+    0.5871,
+    0.5765,
+    0.5553,
+    0.5446,
+    0.5446,
+    0.5446
+   ],
+   "size": 10,
+   "share": 0.01,
+   "samples": [
+    "19-Year-Old Maharashtra Student Jumps To Death From Hostel's 3rd Floor. The victim was identified as Srishti Bhanudas Biramane",
+    "IISc student found dead in hostel room; second case on campus in 15 days",
+    "Nine children who fell ill after chloroquine drive in Andhra\u2019s Polavaram test positive for malaria. They are among the 52 villagers who have taken ill after bei"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": "nep",
+   "nearest_score": 0.12
+  },
+  {
+   "id": 21,
+   "label": "parking, park land, land",
+   "keywords": [
+    "parking",
+    "park land",
+    "land",
+    "acquisition",
+    "housing",
+    "bengaluru new",
+    "25 000",
+    "karnataka minister"
+   ],
+   "scores": [
+    0.8042,
+    0.5681,
+    0.5574,
+    0.5349,
+    0.5349,
+    0.5349,
+    0.5349,
+    0.5054
+   ],
+   "size": 10,
+   "share": 0.01,
+   "samples": [
+    "Bengaluru: Six past amendments allowed specific park land diversions; new Bill proposes 5% blanket provision. The new draft Bill introduced during the recently ",
+    "Urban areas get 30% of funds despite accounting for 40% of population: Karnataka Minister for Municipal Administration H.C. Balakrishna. Mr. Balakrishna also di",
+    "Karnataka High Court quashes acquisition of 1,938 acres for KHB\u2019s housing project over proximity to elephant corridor. The High Court of Karnataka has quashed t"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 22,
+   "label": "suspended, officer, cops",
+   "keywords": [
+    "suspended",
+    "officer",
+    "cops",
+    "probe ordered",
+    "psc chief",
+    "jailed",
+    "ias officer",
+    "leaked"
+   ],
+   "scores": [
+    0.9079,
+    0.7413,
+    0.6218,
+    0.6158,
+    0.6158,
+    0.6158,
+    0.6158,
+    0.6158
+   ],
+   "size": 8,
+   "share": 0.008,
+   "samples": [
+    "Karnataka cops suspended over leaked call about bribes paid for SI postings",
+    "IAS officer at centre of Karnataka veterinary case arrested following disappearance row",
+    "Veterinary recruitment probe: Karnataka Police summon suspended PSC chief"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  },
+  {
+   "id": 23,
+   "label": "caught, office, men",
+   "keywords": [
+    "caught",
+    "office",
+    "men",
+    "incident",
+    "video",
+    "man",
+    "kolkata",
+    "worker"
+   ],
+   "scores": [
+    0.5914,
+    0.546,
+    0.5446,
+    0.5435,
+    0.5084,
+    0.5068,
+    0.4999,
+    0.4829
+   ],
+   "size": 8,
+   "share": 0.008,
+   "samples": [
+    "\u2018Supporter\u2019 booked for illegal I-Day posters featuring Karnataka CM, minister",
+    "Man caught 'filming' women joggers at Bengaluru Lake. A man was allegedly caught secretly recording women jogging at Agara Lake.  He was confronted by joggers w",
+    "Trinamool Congress leader Abhishek Banerjee\u2019s office ransacked in Kolkata; 6 arrested. The vandalism occurred around 4:30 a.m., and three to four masked men wer"
+   ],
+   "platforms": [
+    "news"
+   ],
+   "nearest_tracked": null,
+   "nearest_score": 0.0
+  }
+ ],
+ "note": "Discovered from the harvested news corpus, not the synthetic one \u2014 clustering generated text would only rediscover its templates. Topics matching nothing we already track are the interesting ones.",
+ "generated_at": "2026-09-03T14:21:55"
+}
