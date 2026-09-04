@@ -109,7 +109,36 @@ class LiveState:
         alert = make_alert(t, kind, self._alert_seq, self.topics.get(topic_id))
         self.alerts.insert(0, alert)
         del self.alerts[30:]
+
+        # persist without blocking the caller
+        try:
+            import asyncio as _asyncio  # noqa: PLC0415
+
+            from .stores import stores  # noqa: PLC0415
+
+            _asyncio.get_running_loop().create_task(stores.alerts.save(alert))
+        except RuntimeError:
+            pass  # no loop yet (called during __init__)
         return alert
+
+    async def restore(self) -> int:
+        """Reload the alert board from the store, so a restart is not an
+        empty screen. Seeded alerts are only raised when nothing came back."""
+        from .stores import stores  # noqa: PLC0415
+
+        try:
+            saved = await stores.alerts.recent(30)
+        except Exception as exc:  # pragma: no cover
+            log.warning("could not restore alerts: %s", exc)
+            return 0
+        if not saved:
+            return 0
+        self.alerts = saved
+        for a in saved:
+            self._fired.add(f"{a.get('topicId')}:{a.get('kind')}")
+        self._alert_seq = max(self._alert_seq, len(saved))
+        log.info("restored %d alerts from the store", len(saved))
+        return len(saved)
 
     def escalate(self, topic_id: str, amount: float) -> None:
         if topic_id in self.topics:
@@ -203,8 +232,12 @@ class LiveState:
 
         try:
             await stores.stream.push(post)
+            # index it too, so near-duplicate search covers the live stream
+            await stores.vectors.add(post["id"], post["text"],
+                                     {"topic": post["topic"], "platform": post["platform"],
+                                      "author": post["author"]})
         except Exception as exc:  # pragma: no cover
-            log.debug("stream push failed: %s", exc)
+            log.debug("stream persist failed: %s", exc)
 
         self.processed += 700 + random.randint(0, 900)
 

@@ -59,6 +59,24 @@ class VectorStore(ABC):
         return None
 
 
+class AlertStore(ABC):
+    """The alert board. Persisted so a restart does not empty it."""
+
+    name = "alerts"
+
+    @abstractmethod
+    async def save(self, alert: dict) -> None: ...
+
+    @abstractmethod
+    async def recent(self, limit: int = 30) -> list[dict]: ...
+
+    async def clear(self) -> None:  # pragma: no cover
+        return None
+
+    async def close(self) -> None:  # pragma: no cover
+        return None
+
+
 class StreamStore(ABC):
     """Recent posts and fan-out. Redis Streams in production."""
 
@@ -80,9 +98,9 @@ class StreamStore(ABC):
 def hash_embedding(text: str, dim: int = 64) -> list[float]:
     """Deterministic bag-of-words vector.
 
-    Not semantic -- it is a stand-in so the vector path is exercised without a
-    sentence-transformer download. Good enough for near-duplicate detection on
-    coordinated reposts, which is what this store is used for here.
+    The fallback when sentence-transformers is not installed. Lexical only: it
+    finds reused wording, and scores a Hindi post against its English
+    equivalent at zero. See app/embeddings.py for the semantic path.
     """
     import math
     import re
@@ -138,16 +156,43 @@ class MemoryVectorStore(VectorStore):
         self._items: deque = deque(maxlen=2000)
 
     async def add(self, post_id: str, text: str, payload: dict) -> None:
-        self._items.append({"id": post_id, "vec": hash_embedding(text), "text": text, "payload": payload})
+        import asyncio  # noqa: PLC0415
+
+        from ..embeddings import embedder  # noqa: PLC0415
+
+        # encoding is ~10-30ms on CPU; keep it off the event loop
+        vec = await asyncio.to_thread(embedder.encode, text)
+        self._items.append({"id": post_id, "vec": vec, "text": text, "payload": payload})
 
     async def similar(self, text: str, limit: int = 5) -> list[dict]:
-        q = hash_embedding(text)
+        import asyncio  # noqa: PLC0415
+
+        from ..embeddings import embedder  # noqa: PLC0415
+
+        q = await asyncio.to_thread(embedder.encode, text)
         scored = [
             {"id": it["id"], "score": round(cosine(q, it["vec"]), 4), "text": it["text"], "payload": it["payload"]}
             for it in self._items
+            if len(it["vec"]) == len(q)   # the encoder may warm mid-run
         ]
         scored.sort(key=lambda x: -x["score"])
         return scored[:limit]
+
+
+class MemoryAlertStore(AlertStore):
+    backend = "memory"
+
+    def __init__(self) -> None:
+        self._alerts: deque = deque(maxlen=100)
+
+    async def save(self, alert: dict) -> None:
+        self._alerts.appendleft(alert)
+
+    async def recent(self, limit: int = 30) -> list[dict]:
+        return list(self._alerts)[:limit]
+
+    async def clear(self) -> None:
+        self._alerts.clear()
 
 
 class MemoryStreamStore(StreamStore):

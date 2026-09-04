@@ -10,3 +10,6 @@ backend/**/__pycache__/
 backend/.env
 backend/*.egg-info/
 .pytest_cache/
+
+# runtime database (regenerates itself)
+backend/app/data/visionx.db*

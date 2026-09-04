@@ -8,6 +8,7 @@ from .. import corpus as C
 from ..config import get_settings
 from ..coordination import detect as detect_coordination
 from ..discovery import cache as discovery_cache
+from ..embeddings import embedder
 from ..graph import enriched_accounts, metrics as graph_metrics, top_by
 from ..engine import (
     crisis_factors,
@@ -50,6 +51,8 @@ async def health():
         "accounts": len(C.accounts()),
         "nlp": nlp,
         "stores": stores.status,
+        "database": stores.db_stats(),
+        "embeddings": embedder.status(),
         "forecast": forecast_cache.status(),
         "discovery": discovery_cache.status(),
         "ingest": await ingest.status(),
@@ -91,6 +94,31 @@ async def get_topic(topic_id: str):
         "phases": C.phases(topic_id),
         "related": C.related(topic_id),
         "influencers_detail": top_influencers(t),
+    }
+
+
+@router.get("/topics/{topic_id}/history")
+async def topic_history(topic_id: str, hours: float = Query(24, ge=0.1, le=168)):
+    """Persisted metrics, which survive a restart.
+
+    The in-memory series only ever covers "since the process started"; this
+    reads from the store, so the window can be longer than the uptime.
+    """
+    if not C.topic(topic_id):
+        raise HTTPException(404, f"unknown topic: {topic_id}")
+
+    if hasattr(stores.metrics, "since"):
+        rows = await stores.metrics.since(topic_id, hours)
+    else:
+        rows = await stores.metrics.history(topic_id, limit=1000)
+
+    return {
+        "topic_id": topic_id,
+        "hours": hours,
+        "points": len(rows),
+        "backend": stores.status.get("metrics", {}).get("backend"),
+        "persistent": stores.status.get("metrics", {}).get("persistent", False),
+        "series": rows,
     }
 
 
@@ -229,16 +257,38 @@ class AnnotateIn(BaseModel):
 
 
 @router.post("/nlp/annotate")
-async def annotate(body: AnnotateIn):
-    """Annotate arbitrary text. Handy on stage: paste a sarcastic line in."""
+async def annotate(body: AnnotateIn, index: bool = Query(True, description="also add to the vector store")):
+    """Annotate arbitrary text. Handy on stage: paste a sarcastic line in.
+
+    Indexes by default, so anything annotated becomes searchable through
+    /api/nlp/similar — which is how the cross-language demo works.
+    """
     ann = get_annotator().annotate(body.text)
     topic_id, hits = route_to_topic(body.text)
-    return {**ann.dict(), "routed_topic": topic_id, "topic_match": hits}
+    if index:
+        try:
+            await stores.vectors.add(f"ann{int(__import__('time').time() * 1000)}",
+                                     body.text, {"source": "annotate", "lang": ann.lang})
+        except Exception:  # pragma: no cover
+            pass
+    return {**ann.dict(), "routed_topic": topic_id, "topic_match": hits, "indexed": index}
 
 
 @router.get("/nlp/similar")
 async def similar(text: str = Query(..., min_length=3), limit: int = 5):
-    return await stores.vectors.similar(text, limit)
+    """Semantic near-duplicate search.
+
+    With sentence-transformers loaded this matches across languages: a Hindi
+    post and its English equivalent score highly against each other. With the
+    hash fallback they score zero, because that path is lexical only.
+    """
+    results = await stores.vectors.similar(text, limit)
+    return {
+        "query": text,
+        "backend": embedder.backend,
+        "semantic": embedder.ready,
+        "results": results,
+    }
 
 
 # --- topic discovery -------------------------------------------------------

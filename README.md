@@ -73,8 +73,11 @@ shapes, so the UI needs no changes to run against it:
   measurably under-read
 - **Real ingestion** — Reddit and RSS work with no credentials; YouTube and X
   take keys
-- **Real stores** — TimescaleDB, Neo4j, Qdrant and Redis via `docker compose`,
-  each falling back to an in-process equivalent independently
+- **Persistence** — SQLite by default, so metrics and the alert board survive a
+  restart with nothing to install; TimescaleDB, Neo4j, Qdrant and Redis take
+  over per store when configured via `docker compose`
+- **Semantic vector store** — multilingual sentence embeddings with hybrid
+  dense + lexical retrieval
 
 Nothing about it is required. With no backend, no models and no containers the
 dashboard behaves exactly as it does on the live link. See

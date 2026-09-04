@@ -24,14 +24,28 @@ Every subsystem has a fallback, and `/api/health` reports which one is live.
 That is deliberate: a demo that dies because Redis is not running is worse
 than one that quietly runs in-process.
 
-| Subsystem | Configured | Not configured |
-| --- | --- | --- |
-| Metrics | TimescaleDB | in-memory ring buffer |
-| Graph | Neo4j | in-memory adjacency |
-| Vectors | Qdrant | in-memory cosine over hashed bags |
-| Stream | Redis Streams | in-memory deque |
-| NLP | transformers | rule-based annotator |
-| Ingestion | live collectors | off (pull on demand) |
+Three tiers, not two: **configured external → SQLite → in-memory**. SQLite is
+the default rather than the ceiling, so metrics and the alert board survive a
+restart with nothing to install.
+
+| Subsystem | Configured | Default | Last resort |
+| --- | --- | --- | --- |
+| Metrics | TimescaleDB | SQLite | in-memory ring buffer |
+| Alerts | — | SQLite | in-memory deque |
+| Vectors | Qdrant | SQLite | in-memory |
+| Stream | Redis Streams | SQLite | in-memory deque |
+| Graph | Neo4j | in-memory | (derived from the corpus; nothing to persist) |
+| NLP | transformers | rule-based annotator | |
+| Embeddings | sentence-transformers | hash vectors | |
+| Ingestion | live collectors | off (pull on demand) | |
+
+The database is a single file at `app/data/visionx.db` (WAL mode, one
+connection behind a lock, because the tick loop and request handlers write from
+different threads). Metrics are pruned to `METRICS_RETAIN_HOURS`, and
+`GET /api/topics/{id}/history?hours=24` reads from it — so the window can be
+longer than the process uptime, which the in-memory series could never do.
+
+Alerts are reloaded on boot, so a restart mid-demo is not an empty board.
 
 If a store is configured but unreachable, only that store falls back, and the
 reason appears in `/api/health` under `stores.<name>.reason`.
@@ -136,6 +150,38 @@ of them. The threshold sits at 0.30, inside that gap.
 On the corpus it finds 4 accounts, 53% overlap, an 81-second window, score 67 —
 and correctly leaves the fact-check out.
 
+## The vector store
+
+`app/embeddings.py` encodes with the same multilingual sentence model discovery
+uses, so it is already cached. What that buys: the hash-vector fallback is
+purely lexical, so it finds reused wording and *nothing else* — a post and its
+translation scored zero against each other by construction, which quietly
+dropped the code-mix this project exists to handle.
+
+Retrieval is hybrid, and each hit carries both scores:
+
+    rank = max(semantic, 0.9 × lexical)
+
+Measured on this corpus, querying `"stuck in a huge traffic jam for hours"`:
+
+| document | dense | lexical |
+| --- | --- | --- |
+| English original | 0.852 | 0.548 |
+| Kannada-English code-mix | 0.652 | 0.257 |
+| **Kannada script** | **0.634** | **0.000** |
+| romanised Hindi | 0.088 | low |
+
+The Kannada-script row is the argument for a dense store: zero lexical overlap
+with an English query, still matched.
+
+**A measured limitation, stated rather than hidden:** romanised Hindi
+("ORR par bahut zyada jam hai") scores 0.088. The encoder was trained on native
+scripts, so casual romanised Devanagari is out of its distribution — and the
+lexical half cannot rescue it either, because it shares almost no tokens with
+an English query. Hybrid retrieval helps native scripts and English-heavy
+code-mix; it does not solve this case. Transliterating romanised Indic to
+native script before embedding would be the real fix, and is not done here.
+
 ## Topic discovery
 
 The nine tracked topics are *defined* — someone wrote them down — and ingested
@@ -221,6 +267,7 @@ connect, as a hypertable where the extension is available.
 | `GET /api/topics/{id}` | one topic, with crisis/virality factors and phases |
 | `GET /api/topics/{id}/cascade` | cascade hops derived from the graph |
 | `GET /api/topics/{id}/forecast` | fitted forecast with model, sigma, AIC |
+| `GET /api/topics/{id}/history` | persisted metrics, survives restarts |
 | `GET /api/discovery` | topics discovered by BERTopic, from cache |
 | `POST /api/discovery/run` | re-run discovery in a worker thread |
 | `GET /api/network` | accounts with computed PageRank/Louvain/betweenness |
@@ -231,7 +278,7 @@ connect, as a hypertable where the extension is available.
 | `GET /api/alerts` | the alert board |
 | `POST /api/alerts/raise` | fire an alert by rule |
 | `POST /api/nlp/annotate` | annotate arbitrary text |
-| `GET /api/nlp/similar` | near-duplicate lookup via the vector store |
+| `GET /api/nlp/similar` | hybrid semantic + lexical search, both scores returned |
 | `POST /api/ingest/run` | pull real posts once |
 | `GET /api/report/{id}` | the full intelligence brief |
 | `POST /api/control/escalate` | drive the demo |

@@ -21,6 +21,13 @@ class Settings(BaseSettings):
     tick_seconds: float = 2.6
     forecast_refit_seconds: int = 120   # a seasonal fit is ~1s per topic
 
+    # --- persistence ---------------------------------------------------------
+    # SQLite is the default store tier: no service to run, survives a restart.
+    # Set sqlite_enabled=false to go back to pure in-memory.
+    sqlite_enabled: bool = True
+    sqlite_path: str = ""              # blank = app/data/visionx.db
+    metrics_retain_hours: int = 48
+
     # --- stores -------------------------------------------------------------
     # Empty means "use the in-memory implementation". Set these to point at the
     # containers in docker-compose.yml.

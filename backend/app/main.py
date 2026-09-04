@@ -39,7 +39,25 @@ async def lifespan(app: FastAPI):
     for key, st in stores.status.items():
         log.info("  store %-8s %-12s %s", key, st["backend"], st.get("reason") or "")
 
+    restored = await state.restore()
+    if not restored:
+        # The standing board is raised in LiveState.__init__, before there is a
+        # loop to schedule writes on, so persist it here on a first run.
+        for alert in state.alerts:
+            await stores.alerts.save(alert)
+        log.info("  no persisted alerts; seeded and saved %d", len(state.alerts))
+
     task = asyncio.create_task(clock())
+
+    # Embeddings load in a thread too. Until ready the vector store uses hash
+    # vectors, which are lexical only -- /api/health says which is live.
+    from .embeddings import embedder  # noqa: PLC0415
+
+    async def _warm_embed():
+        ok = await asyncio.to_thread(embedder.warm)
+        log.info("  embeddings %s", "loaded" if ok else f"unavailable: {embedder.load_error}")
+
+    embed_task = asyncio.create_task(_warm_embed())
 
     # Load NLP models in a thread so startup returns immediately. Until they
     # are ready the rule annotator answers, and /api/health says which is live.
@@ -85,6 +103,7 @@ async def lifespan(app: FastAPI):
     finally:
         task.cancel()
         forecast_task.cancel()
+        embed_task.cancel()
         if warm_task:
             warm_task.cancel()
         await ingest.stop()

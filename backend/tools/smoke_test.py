@@ -67,6 +67,47 @@ async def test_rest(client: httpx.AsyncClient) -> None:
               f"h=1 width {widths[0]} -> h={len(widths)} width {widths[-1]}")
         check("forecast is seasonal", f["seasonal"] is True, "daily seasonality fitted")
 
+    # --- persistence -------------------------------------------------------
+    h = (await client.get(f"{BASE}/api/health")).json()
+    persistent = [k for k, v in h["stores"].items() if v.get("persistent")]
+    check("stores persist across restarts", len(persistent) >= 3,
+          f"{', '.join(persistent)} on {h['stores']['metrics']['backend']}")
+
+    db = h.get("database")
+    check("database file is live", bool(db) and db["topic_metrics"] > 0,
+          f"{db['topic_metrics']} metric rows, {db['alerts']} alerts, "
+          f"{db['vectors']} vectors, {db['size_kb']}KB" if db else "no database")
+
+    r = await client.get(f"{BASE}/api/topics/traffic/history?hours=24")
+    hist = r.json()
+    check("GET /api/topics/traffic/history", r.status_code == 200 and hist["persistent"],
+          f"{hist['points']} persisted points from {hist['backend']}")
+
+    r = await client.get(f"{BASE}/api/alerts")
+    check("alert board survived restart", len(r.json()) > 0,
+          f"{len(r.json())} alerts restored from the store")
+
+    # --- semantic vector store --------------------------------------------
+    emb = h.get("embeddings", {})
+    check("embeddings are semantic", emb.get("ready") is True,
+          f"{emb.get('backend')} @ {emb.get('dim')} dims")
+
+    await client.post(f"{BASE}/api/nlp/annotate",
+                      json={"text": "Massive traffic jam on the Outer Ring Road, stuck two hours"})
+    await client.post(f"{BASE}/api/nlp/annotate",
+                      json={"text": "ಟ್ರಾಫಿಕ್ ತುಂಬಾ ಜಾಸ್ತಿ ಇದೆ, ಎರಡು ಗಂಟೆಯಿಂದ ಸಿಕ್ಕಿಹಾಕಿಕೊಂಡಿದ್ದೇವೆ"})
+
+    r = await client.get(f"{BASE}/api/nlp/similar",
+                         params={"text": "stuck in a huge traffic jam for hours", "limit": 20})
+    sim = r.json()
+    kannada = [x for x in sim["results"] if any(ord(c) > 0x0C80 and ord(c) < 0x0D00 for c in x["text"])]
+    # the point of a dense store: native script matches an English query with
+    # zero lexical overlap
+    check("cross-script semantic match",
+          bool(kannada) and kannada[0]["semantic"] > 0.4 and kannada[0]["lexical"] < 0.05,
+          f"Kannada script: dense {kannada[0]['semantic']}, lexical {kannada[0]['lexical']}"
+          if kannada else "no Kannada document matched")
+
     r = await client.get(f"{BASE}/api/discovery")
     if r.status_code == 503:
         check("GET /api/discovery", False, "no discovery run cached")

@@ -163,6 +163,20 @@ Click **JSON** so a file actually downloads. It's a small thing and it lands.
 > thousand and sits at the centre. Follower count would have you brief the
 > wrong person."
 
+**"Does it handle other languages, really?"**
+> Run the cross-language search. `GET /api/nlp/similar?text=stuck in a huge
+> traffic jam for hours`. "That Kannada-script result scores 0.63 against an
+> English query with *zero* words in common — the dense store matched the
+> meaning. And be straight if they push: romanised Hindi scores 0.09. The
+> encoder is trained on native scripts, so casual romanised Devanagari is out
+> of distribution. We measured it, it's in the README, and transliteration is
+> the fix we haven't built."
+
+**"What happens if it crashes mid-demo?"**
+> "Restart it." Do it. "The alert board comes back — alerts and metrics are in
+> SQLite, not memory. And the history endpoint can show a longer window than
+> the process has been running, which the old in-memory version couldn't."
+
 **"Where do the topics come from? Did you just pick them?"**
 > "The nine tracked ones, yes — they carry the narrative panels. But scroll
 > down." Open Topic explorer → Discovered topics. "That's BERTopic over a
